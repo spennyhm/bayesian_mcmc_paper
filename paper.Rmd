@@ -1,0 +1,491 @@
+---
+title: "Introduction to Bayesian MCMC Techniques: A Practical Guide for the Lay-Actuary"
+author: "Spencer Miller & Kenny Smart"
+date: "`r Sys.Date()`"
+output: pdf_document
+editor_options: 
+  markdown: 
+    wrap: 72
+abstract: "To be completed later."
+bibliography: references.bib
+---
+
+# Introduction
+
+Some text
+
+## Target Audience
+
+-   An actuary who has finished exams a few years ago
+
+-   An actuary who constantly finds their estimates to be out of line
+    with results
+
+-   An actuary interested in learning about Stan but finds the math too
+    onerous or intimidating
+
+-   An actuary with limited data
+
+## Current Theories on Prediction
+
+-   Point estimates do not provide for an adequate measure of process /
+    parameter / model risk
+
+-   Simple MCMC models layer in process risk but still fail to account
+    for parameter risk / model risk
+
+-   Using a copula for parameters ignores the likelihood of occurring
+    given the data
+
+## Yes, Even Actuaries are Human
+
+When making predictions, people often find themselves using heuristics.
+As outlined by Amos Tversky and Daniel Kahneman in their ground-breaking
+paper, there are several factors at play when making predictions:
+
+-   *Insensitivity to sample size*: An actuary may predict some future
+    value based on limited data.
+
+-   *Insensitivity to prior probability of outcomes*: Example?
+
+-   *Misconception of chance*: Say something about process risk or that
+    an actuary may infer some sort of pattern where one does not exist.
+
+-   *Insensitivity to predictive accuracy*: Taking a risk manager’s
+    assessment of a new claims handling process at face value.
+
+-   *The illusion of validity*: Using an exposure base as a proxy for
+    loss?
+
+-   *Misconceptions of Regression*: Letting one bad AY influence the
+    expectation of the next AY.
+
+-   *Anchoring*: Using the prior prediction.
+
+# Basics of Bayesian MCMC
+
+Need an introductory sentence
+
+-   A **Markov process** is a random process for which the future (the
+    next step) depends only on the present state; it has no memory of
+    how the present state was reached.
+
+-   **Monte Carlo** simulation uses random sampling and statistical
+    modeling to estimate mathematical functions and mimic the operations
+    of complex systems.
+
+-   **Bayesian statistics** is an approach to data analysis based on
+    Bayes’ theorem, where available knowledge about parameters in a
+    statistical model is updated with the information in observed
+    data.
+
+-   This process is done using Stan , an open-source software, via
+    common coding languages (e.g., python and R). In our example, we
+    leverage the RStan package, though there are numerous other packages
+    that can be used.
+
+## A Simple Walkthrough
+
+Kenny to provide example. Ideally this is a step-by-step with graphics
+so that's super clear what is going on. We can gloss over the more
+complex stuff.
+
+# An Example in Action
+
+For a simple example, we’ll use the procedure to estimate the annual
+number of commercial fire claims using data compiled by the F'ed'eration
+Francaise des Soci'et'e d'Assurance. The data includes 9,613 fires
+occurring between 1982 and 1996. For simplicity, we’ll assume a 0%
+frequency trend, the exposure base (commercial buildings) are level over
+the time period, and we are tasked with estimating the number of fires
+in 1993.
+
+First, let's get the data we'll be using in our example:
+
+```{r get_data}
+data("frecomfire", package = 'CASdatasets')
+
+data.table::setDT(x = frecomfire)
+
+dplyr::glimpse(frecomfire)
+```
+
+Next, we'll get the count data by year between 1982 and 1992.
+
+```{r count_data, echo=FALSE, fig.height=4, fig.width=6, fig.align='center'}
+true_count <- frecomfire[Year == 1993, .N]
+
+count_data <- frecomfire[
+  Year < 1993, 
+  .(count = .N), 
+  keyby = .(year = Year)
+]
+
+ggplot2::ggplot(
+  data = count_data,
+  mapping = ggplot2::aes(x = year, y = count)
+) +
+  ggplot2::geom_point() +
+  ggplot2::scale_x_continuous(
+    breaks = count_data$year,
+    labels = count_data$year
+  ) +
+  ggplot2::scale_y_continuous(name = '') +
+  ggplot2::theme_classic() +
+  ggplot2::ggtitle(label = 'Historical Count of Fires by Year')
+```
+
+Add some commentary about the chart.
+
+```{r method_A, include=FALSE}
+method_A <- mean(count_data$count)
+count_cv <- sd(count_data$count) / method_A # 16.7%
+selected_cv <- 0.15
+```
+
+In the simplest case, an actuary may decide that a straight average of
+historical counts is the best approximation of future counts. In this
+case, the average number of fires per year is `r round(method_A, 0)`
+("Method A").
+
+```{r method_B, include=FALSE}
+method_B <- mean(count_data[year %in% c(1989, 1991, 1992), count])
+```
+
+However, as actuaries, we like to incorporate more information than just
+raw data. Let's say you know there was a change to building construction
+in 1989 that accounts for the spike seen in the chart. You would give
+more weight to those periods and less to the pre-1989 values. Of course,
+1990 might be an outlier, so you decide to use a four year average
+(excluding 1990) of `r round(method_B, 0)` ("Method B").
+
+Your next logical step might be to add some process risk around your
+estimate by fitting a distribution to the data. Using the
+maximum-likelihood-estimates of a few common distributions, you settle
+on using a Lognormal distribution parameterized using a mean of
+`r round(method_B, 0)` and standard deviation of `r selected_cv * 100`%.
+
+```{r method_C, echo=FALSE, fig.height=4, fig.width=6, fig.align='center', warning=FALSE}
+ggplot2::ggplot(
+  data = count_data,
+  mapping = ggplot2::aes(sample = count)
+) +
+  ggplot2::geom_abline(
+    mapping = ggplot2::aes(intercept = 0, slope = 1),
+    color = 'black'
+  ) +
+  ggplot2::stat_qq(
+    mapping = ggplot2::aes(color = 'Lognormal'),
+    geom = 'path',
+    linetype = 'dotted',
+    linewidth = 1,
+    distribution = stats::qlnorm,
+    dparams = as.list(MASS::fitdistr(x = count_data$count, densfun = "lognormal")$estimate)
+  ) +
+  ggplot2::stat_qq(
+    mapping = ggplot2::aes(color = 'Normal'),
+    geom = 'path',
+    linetype = 'dotted',
+    linewidth = 1,
+    distribution = stats::qnorm,
+    dparams = as.list(MASS::fitdistr(x = count_data$count, densfun = "normal")$estimate)
+  ) +
+  ggplot2::stat_qq(
+    mapping = ggplot2::aes(color = 'Weibull'),
+    geom = 'path',
+    linetype = 'dotted',
+    size = 1,
+    distribution = stats::qweibull,
+    dparams = as.list(MASS::fitdistr(x = count_data$count, densfun = "weibull")$estimate)
+  ) +
+  ggplot2::stat_qq(
+    mapping = ggplot2::aes(color = 'Poisson'),
+    geom = 'path',
+    linetype = 'dotted',
+    linewidth = 1,
+    distribution = stats::qpois,
+    dparams = as.list(MASS::fitdistr(x = count_data$count, densfun = "poisson")$estimate)
+  ) +
+  ggplot2::stat_qq(
+    mapping = ggplot2::aes(color = 'Neg. Binomial'),
+    geom = 'path',
+    linetype = 'dotted',
+    linewidth = 1,
+    distribution = stats::qnbinom,
+    dparams = as.list(MASS::fitdistr(x = count_data$count, densfun = "negative binomial")$estimate)
+  ) +
+  ggplot2::theme_classic() +
+  ggplot2::theme(legend.position = 'bottom') +
+  ggplot2::scale_color_manual(
+    name = 'Distribution',
+    values = c(
+      'Lognormal' = 'red',
+      'Normal' = 'orange',
+      'Weibull' = 'green',
+      'Poisson' = 'blue',
+      'Neg. Binomial' = 'purple'
+    )
+  ) + 
+  ggplot2::ggtitle(label = 'Quantile-Quantile Plot')
+
+method_C_sigma <- sqrt(log(1 + selected_cv ^ 2))
+method_C_mu <- log(method_B) - 0.5 * method_C_sigma ^ 2
+
+set.seed(314159)
+method_C_sample <- stats::rlnorm(
+  n = 10000, 
+  meanlog = method_C_mu,
+  sdlog = method_C_sigma
+)
+
+method_C <- mean(method_C_sample)
+```
+
+After running 10,000 simulations with your selected distribution, you're
+left with a central estimate of `r round(method_C, 0)` ("Method C").
+
+But as we discussed earlier, there are a few problems with just relying
+on our data:
+
+-   The sample size is quite small (n = `r nrow(count_data)`).
+
+-   That knowledge of a change to building construction may be
+    misplaced.
+
+-   Regression to the mean.
+
+-   It might look like there is a "new normal" but you could be seeing a
+    trend where there isn't one.
+
+So how do we handle these possible baises? That's where Bayesian MCMC
+comes in. Our first model will assume a wide prior. We'll assume that
+our Lognormal distribution has the following prior distributions:
+
+-   *mu* \~ Normal(`r round(method_C_mu, 3)`,
+    `r round(method_C_mu * 0.1, 3)`)
+
+-   *sigma* \~ Exponential(`r round(1 / method_C_sigma, 3)`)
+
+```{r method_D, include=FALSE}
+method_D_stan_code <- '
+  data{
+    int<lower = 0> N;
+    real<lower = 0> obs[N];
+    real mu_mean;
+    real mu_cv;
+    real<lower = 0> sigma_mean;
+  }
+  
+  parameters {
+    real mu;
+    real<lower = 0> sigma;
+  }
+
+  model {
+    mu ~ normal(mu_mean, mu_mean * mu_cv);
+    sigma ~ exponential(1 / sigma_mean);
+  
+    for(i in 1:N) {
+      obs[i] ~ lognormal(mu, sigma);
+    }
+  }
+'
+
+method_D_stan_model <- rstan::stan(
+  model_code = method_D_stan_code,
+  data = list(
+    N = nrow(count_data), 
+    obs = count_data$count,
+    mu_mean = method_C_mu,
+    mu_cv = 0.1, # 10% coef. of variation
+    sigma_mean = method_C_sigma
+  ),
+  chains = 4,
+  iter = 5000,
+  warmup = 2500,
+  seed = 314159
+)
+
+method_D_params <- list(
+  'meanlog' = rstan::extract(object = method_D_stan_model, pars = 'mu')[[1]],
+  'sdlog' = rstan::extract(object = method_D_stan_model, pars = 'sigma')[[1]]
+)
+
+set.seed(314159)
+method_D_sample <- stats::rlnorm(
+  n = 10000, 
+  meanlog = method_D_params[['meanlog']],
+  sdlog = method_D_params[['sdlog']]
+)
+
+method_D <- mean(method_D_sample)
+```
+
+After running 10,000 simulations with your selected distribution, you're
+left with a central estimate of `r round(method_D, 0)` ("Method D").
+Since you used a wide prior, your result will be fairly close to Method
+A even though you had a much higher prior. That is because the data is
+overwhelmingly lower, thus a higher estimate is less likely.
+
+Next, let's test "tighter" our prior. After all, we're pretty confident
+of the change. We'll assume that our Lognormal distribution has the
+following prior distributions:
+
+-   *mu* \~ Normal(`r round(method_C_mu, 3)`,
+    `r round(method_C_mu * 0.01, 3)`)
+
+-   *sigma* \~ Exponential(`r round(1 / method_C_sigma, 3)`)
+
+```{r method_E, include=FALSE}
+method_E_stan_model <- rstan::stan(
+  model_code = method_D_stan_code,
+  data = list(
+    N = nrow(count_data), 
+    obs = count_data$count,
+    mu_mean = method_C_mu,
+    mu_cv = 0.01, # 1% coef. of variation
+    sigma_mean = method_C_sigma
+  ),
+  chains = 4,
+  iter = 5000,
+  warmup = 2500,
+  seed = 314159
+)
+
+method_E_params <- list(
+  'meanlog' = rstan::extract(object = method_E_stan_model, pars = 'mu')[[1]],
+  'sdlog' = rstan::extract(object = method_E_stan_model, pars = 'sigma')[[1]]
+)
+
+set.seed(314159)
+method_E_sample <- stats::rlnorm(
+  n = 10000, 
+  meanlog = method_E_params[['meanlog']],
+  sdlog = method_E_params[['sdlog']]
+)
+
+method_E <- mean(method_E_sample)
+```
+
+After running 10,000 simulations with your selected distribution, you're
+left with a central estimate of `r round(method_E, 0)` ("Method E").
+While this is higher than your "wide" prior estimate in Method D, it
+still falls short of the estimate in Method B.
+
+Let's compare each result to the true number of fires that occured in
+1993 (`r true_count`).
+
+```{r compare, echo=FALSE, fig.height=4, fig.width=6, fig.align='center'}
+ggplot2::ggplot() +
+  ggplot2::geom_line(
+    mapping = ggplot2::aes(
+      y = c(0.6, 1.4),
+      x = c(method_A, method_A)
+    )
+  ) +
+  ggplot2::geom_line(
+    mapping = ggplot2::aes(
+      y = c(1.6, 2.4),
+      x = c(method_B, method_B)
+    )
+  ) +
+  ggplot2::geom_boxplot(
+    mapping = ggplot2::aes(
+      y = 3,
+      x = sort(method_C_sample)
+    ),
+    outliers = FALSE
+  ) +
+  ggplot2::geom_boxplot(
+    mapping = ggplot2::aes(
+      y = 4,
+      x = sort(method_D_sample)
+    ),
+    outliers = FALSE
+  ) +
+  ggplot2::geom_boxplot(
+    mapping = ggplot2::aes(
+      y = 5,
+      x = sort(method_E_sample)
+    ),
+    outliers = FALSE
+  ) +
+  ggplot2::geom_jitter(
+    mapping = ggplot2::aes(x = count_data$count, y = 0),
+    height = 0.25
+  ) +
+  ggplot2::geom_vline(
+    xintercept = true_count,
+    color = 'blue'
+  ) +
+  ggplot2::theme_classic() +
+  ggplot2::coord_cartesian(xlim = c(300, 1000)) +
+  ggplot2::scale_x_continuous(name = '') +
+  ggplot2::scale_y_continuous(
+    name = '',
+    breaks = 0:5,
+    labels = c('Empirical', paste('Method', LETTERS[1:5]))
+  ) + 
+  ggplot2::ggtitle(label = 'Comparison of Methods')
+```
+
+Add commentary.
+
+# Literature Review
+
+Bayesian MCMC is currently being used by actuaries in various
+applications:
+
+-   Reserving (Meyers 2015)
+
+-   Renewal Functions (Aminzadeh & Deng 2022)
+
+-   Risk Margins (Meyers 2019)
+
+-   Trends (Schmid 2013)
+
+We also believe there is a number of other possible applications,
+ranging from selection of development factors to estimating reserve
+variability. We leave it to the reader to explore these.
+
+# Acknowledgements
+
+Thank everyone that peer review
+
+# Biographies of the Authors
+
+## Spencer Miller
+
+To be completed later
+
+## Kenny Smart
+
+To be completed later
+
+# Citations
+
+## References
+
+A. Tversky, and D. Kahneman, Judgment under uncertainty: Heuristics and biases, Science 185, 1124–1131 (1974).
+
+Meyers, G. 2015. “Stochastic Loss Reserving Using Bayesian MCMC Models.” CAS Monograph #1.
+
+Aminzadeh, M.S., and Min Deng. 2022. “Bayesian Estimation of Renewal Function Based on Pareto-Distributed Inter-Arrival Times via an MCMC Algorithm.” Variance 15 (2).
+
+Meyers, G. 2019. “A Cost-of-Capital Risk Margin Formula for Nonlife Insurance Liabilities.” Variance 12 (2).
+
+Schmid, F. 2013. "Bayesian Trend Selection." Casualty Actuarial Society E-Forum, Spring 2013. 
+
+## Software
+
+Barrett, Tyson, Matt Dowle, Arun Srinivasan, Jan Gorecki, Michael Chirico, Toby Hocking, Benjamin Schwendinger, and Ivan Krylov. 2025. “Data.table: Extension of ‘Data.frame‘.” https://CRAN.Rproject.org/package=data.table.
+
+Dutang, Christophe, and Arthur Charpentier. 2025. “CASdatasets: Insurance Datasets.” https://doi.org/10.57745/P0KHAG.
+
+Stan Development Team. 2025. “{RStan}: The {r} Interface to {Stan}.” https://mc-stan.org/.
+
+Wickham, Hadley. 2016. “Ggplot2: Elegant Graphics for Data Analysis.” https://ggplot2.tidyverse.org.
+
+
+
+
