@@ -32,19 +32,31 @@ Some text
 ## Yes, Even Actuaries are Human
 
 When making predictions, people often rely on heuristics. While these are typically useful from an
-evolutionary standpoint, they can "... lead to systematic and predictable errors".^[1]^
+evolutionary standpoint, they can "... lead to systematic and predictable errors". Below is a
+non-exhaustive list of possible factors at play when making actuarial predictions:^[1]^
 
-There are several factors at play when making predictions:
+-   *Insensitivity to sample size\
+    *
+-   *Insensitivity to the prior probability of outcomes*\
+    When making a judgment of whether item X belongs to either class A or class B, people will
+    assign it to the class in which the description of item X matches the stereotype of the class,
+    despite the relative likelihood of each class. For example, given the description of a person
+    and a list of occupations, you would likely let the description of the individual inform your
+    estimate of their occupation, while ignoring how people work in a given occupation.
+-   *Misconception of chance*\
+    Say something about process risk or that an actuary may infer some sort of pattern where one
+    does not exist.
+-   *Insensitivity to predictive accuracy*\
+    Taking a risk manager’s assessment of a new claims handling process at face value.
+-   *The illusion of validity*\
+    Using an exposure base as a proxy for loss?
+-   *Misconceptions of Regression*\
+    Letting one bad AY influence the expectation of the next AY.
+-   *Anchoring*\
+    Using the prior prediction.
 
--   *Insensitivity to sample size*: An actuary may predict some future value based on limited data.
--   *Insensitivity to prior probability of outcomes*: Example?
--   *Misconception of chance*: Say something about process risk or that an actuary may infer some
-    sort of pattern where one does not exist.
--   *Insensitivity to predictive accuracy*: Taking a risk manager’s assessment of a new claims
-    handling process at face value.
--   *The illusion of validity*: Using an exposure base as a proxy for loss?
--   *Misconceptions of Regression*: Letting one bad AY influence the expectation of the next AY.
--   *Anchoring*: Using the prior prediction.
+While it's impossible to avoid all possible biases or errors when making predictions, there are
+methods available that can help mitigate the risk.
 
 # Basics of Bayesian MCMC
 
@@ -364,18 +376,22 @@ ggplot2::ggplot() +
 
 It appears that all four methods severely overestimated the true counts. However, if we look at
 Method C versus Method D, the true count is approximately equal to the
-`r round(percentile_C, 3) * 100`% confidence level of Method C but the
+`r round(percentile_C, 3) * 100`% confidence level of Method C, but the
 `r round(percentile_D, 3) * 100`% confidence level of Method D.
 
 With the benefit of hindsight, let's see why we overestimated the true counts in all four methods.
 As it turns out, we fell prey to (at least) two key biases:
 
 -   Humans just aren't that great at identifying random processes. For example, a series of coin
-    tosses with all heads is seen as "less random" than a series with alternative heads and tails
+    tosses with all heads is seen as "less random" than a series with alternating heads and tails,
     even though both results are equally likely.
 -   Regression to the mean. As seen in the chart, the high average for 2008-2011 was followed by a
     low average in 2012-2023. This resulted in the new all-year average (1983-2023) being nearly
-    identical to the all-year average prior to the rise (1983-2007).
+    identical to the all-year average before the rise (1983-2007).[\^1]
+
+[\^1]: It is not uncommon for there to be large fluctuations in the frequency of high-maginitude
+earthquakes: [From the
+USGC](<https://www.usgs.gov/faqs/why-are-we-having-so-many-earthquakes-has-naturally-occurring-earthquake-activity-been>)
 
 ```{r plot_full, echo=FALSE, fig.height=4, fig.width=6, fig.align='center'}
 count_data_full <- eqlist[
