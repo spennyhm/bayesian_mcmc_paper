@@ -1,15 +1,27 @@
 ---
-title: 'A Practical Guide the Hamiltonian Monte Carlo Method'
+title: 'A Practical Guide to the Bayesian Hamiltonian Monte Carlo Method'
 author: <p>Spencer Miller<span style='font-variant:small-caps'>, fcas, maaa</span> & Kenny Smart<span style='font-variant:small-caps'>, fcas, maaa</span></p>
 date: '`r Sys.Date()`'
-output: pdf_document
+output: 
+  pdf_document: default
+  word_document: default
+  html_document: default
+knit: (function(inputFile, encoding) {
+    rmarkdown::render(
+      inputFile, 
+      encoding = encoding, 
+      output_dir = './bayesian_mcmc_paper/', 
+      output_format = "all"
+    )  
+  })
 editor_options: 
   markdown: 
     wrap: 100
 abstract: 'To be completed later.'
 ---
 
-**Keywords** — Bayesian, Monte Carlo, Markov Chain, Forecasting, Predictions, Behavioral Economics
+**Keywords** — Bayesian, Monte Carlo, Markov Chain, MCMC, Hamiltonian, Stan, Forecasting,
+Predictions, Behavioral Economics
 
 # Introduction
 
@@ -36,22 +48,28 @@ evolutionary standpoint, they can "... lead to systematic and predictable errors
 non-exhaustive list of possible factors at play when making actuarial predictions:^[1]^
 
 -   *Insensitivity to sample size\
-    *
+    *Example?
+
 -   *Insensitivity to the prior probability of outcomes*\
     When making a judgment of whether item X belongs to either class A or class B, people will
     assign it to the class in which the description of item X matches the stereotype of the class,
     despite the relative likelihood of each class. For example, given the description of a person
     and a list of occupations, you would likely let the description of the individual inform your
     estimate of their occupation, while ignoring how people work in a given occupation.
+
 -   *Misconception of chance*\
     Say something about process risk or that an actuary may infer some sort of pattern where one
     does not exist.
+
 -   *Insensitivity to predictive accuracy*\
     Taking a risk manager’s assessment of a new claims handling process at face value.
+
 -   *The illusion of validity*\
     Using an exposure base as a proxy for loss?
+
 -   *Misconceptions of Regression*\
     Letting one bad AY influence the expectation of the next AY.
+
 -   *Anchoring*\
     Using the prior prediction.
 
@@ -107,17 +125,17 @@ it's 2011 and we are tasked with estimating the number of 6.0 magnitude earthqua
 
 First, let's get the data we'll be using in our example:
 
-```{r get_data}
+```{r get_data, include=FALSE}
 data("eqlist", package = 'CASdatasets')
 
 data.table::setDT(x = eqlist)
 
-dplyr::glimpse(eqlist)
+print(eqlist)
 ```
 
 Next, we'll get the count data by year between 1983 and 2011.
 
-```{r count_data, echo=FALSE, fig.height=4, fig.width=6, fig.align='center'}
+```{r count_data, echo=FALSE, fig.height=4, fig.width=6}
 true_count <- eqlist[lubridate::year(day) == 2012, .N]
 
 count_data <- eqlist[
@@ -165,7 +183,7 @@ distribution to the data. Using the maximum-likelihood-estimates of a few common
 settle on using a Lognormal distribution parameterized using a mean of `r round(method_B, 0)` and
 coefficient of variation of `r selected_cv * 100`% (based on all year coefficient of variation).
 
-```{r method_C, echo=FALSE, fig.height=4, fig.width=6, fig.align='center', warning=FALSE}
+```{r method_C, echo=FALSE, fig.height=4, fig.width=6, warning=FALSE}
 ggplot2::ggplot(
   data = count_data,
   mapping = ggplot2::aes(sample = count)
@@ -226,7 +244,11 @@ ggplot2::ggplot(
       'Neg. Binomial' = 'purple'
     )
   ) + 
-  ggplot2::ggtitle(label = 'Quantile-Quantile Plot')
+  ggplot2::ggtitle(label = 'Quantile-Quantile Plot') +
+  ggplot2::coord_cartesian(
+    xlim = c(100, 225),
+    ylim = c(100, 225)
+  )
 
 method_C_sigma <- sqrt(log(1 + selected_cv ^ 2))
 method_C_mu <- log(method_B) - 0.5 * method_C_sigma ^ 2
@@ -328,7 +350,7 @@ assume that our Lognormal distribution has the following revised prior distribut
 
 Let's compare each result to the true number of fires that occurred in 2012 (`r true_count`).
 
-```{r compare, echo=FALSE, fig.height=4, fig.width=6, fig.align='center'}
+```{r compare, echo=FALSE, fig.height=4, fig.width=6}
 ggplot2::ggplot() +
   ggplot2::geom_line(
     mapping = ggplot2::aes(
@@ -387,13 +409,9 @@ As it turns out, we fell prey to (at least) two key biases:
     even though both results are equally likely.
 -   Regression to the mean. As seen in the chart, the high average for 2008-2011 was followed by a
     low average in 2012-2023. This resulted in the new all-year average (1983-2023) being nearly
-    identical to the all-year average before the rise (1983-2007).[\^1]
+    identical to the all-year average before the rise (1983-2007).
 
-[\^1]: It is not uncommon for there to be large fluctuations in the frequency of high-maginitude
-earthquakes: [From the
-USGC](<https://www.usgs.gov/faqs/why-are-we-having-so-many-earthquakes-has-naturally-occurring-earthquake-activity-been>)
-
-```{r plot_full, echo=FALSE, fig.height=4, fig.width=6, fig.align='center'}
+```{r plot_full, echo=FALSE, fig.height=4, fig.width=6}
 count_data_full <- eqlist[
   lubridate::year(day) %in% 1983:2023, 
   .(count = .N), 
