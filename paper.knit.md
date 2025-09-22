@@ -1,7 +1,7 @@
 ---
 title: 'A Practical Guide to the Bayesian Hamiltonian Monte Carlo Method'
 author: <p>Spencer Miller<span style='font-variant:small-caps'>, fcas, maaa</span> & Kenny Smart<span style='font-variant:small-caps'>, fcas, maaa</span></p>
-date: '`r Sys.Date()`'
+date: '2025-09-22'
 output: 
   pdf_document: default
   # word_document: default
@@ -234,99 +234,37 @@ over 6.0 magnitude for the upcoming year (2012). You are given a dataset of prio
 
 First, let's get the data we'll be using in our example. Below is the history for the last .
 
-```{r data_by_year, echo=FALSE, warning=FALSE, fig.width=6, fig.height=4}
-options(scipen = 999)
+![](C:/Users/spencer.miller/Documents/Repos/bayesian_mcmc_paper/paper_files/figure-latex/data_by_year-1.pdf)<!-- --> 
 
-data(eqlist, package = 'CASdatasets')
 
-df <- data.table::as.data.table(eqlist)[
-  mag >= 6.0, 
-  .(count = .N),
-  keyby = .(year = lubridate::year(day))
-]
-
-prosp_year <- 2012
-
-counts <- df[year %in% 1983:(prosp_year - 1)]
-
-true_count <- df[year == prosp_year, count]
-
-gg_orig <- ggplot2::ggplot() +
-  ggplot2::scale_x_continuous(name = 'Year', breaks = seq(1983, 2012, 3)) +
-  ggplot2::scale_y_continuous(name = '') +
-  ggplot2::theme_minimal() +
-  ggplot2::theme(
-    panel.grid.minor.x = ggplot2::element_blank(),
-    panel.grid.minor.y = ggplot2::element_blank()
-  ) +
-  ggplot2::labs(title = 'Frequency of 6.0 Maginitude Earthquakes') +
-  ggplot2::geom_col(
-    data = counts,
-    mapping = ggplot2::aes(
-      x = year,
-      y = count
-    ),
-    color = 'black',
-    fill = 'lightgrey',
-    alpha = 0.5
-  )
-
-gg_orig
-```
-
-```{r point_estimate, include=FALSE}
-point_estimate <- mean(counts[year >= prosp_year - 5, count])
-```
 
 In the simplest case you may decide given the recent trend, that the five-year average is the best
 approximation of future frequency. In this case, your selected frequency is
-`r round(point_estimate, 0)` ("Point Estimate").
+183 ("Point Estimate").
 
 Your next logical step might be to add some process risk around your estimate by fitting a
 distribution to the data. Based on an examination of the data, you decide to model frequency using
-the Poisson distribution with lambda = `r round(point_estimate, 0)`.
+the Poisson distribution with lambda = 183.
 
-```{r process_risk, include=FALSE}
-process_risk_lambda <- point_estimate
 
-set.seed(314159)
-iterations <- 10000
-
-process_risk_sample <- stats::rpois(n = iterations, lambda = process_risk_lambda)
-
-process_risk <- mean(process_risk_sample)
-```
 
 After running 10,000 simulations with your selected distribution, you're left with a central
-estimate of `r round(process_risk, 0)`. Not surprisingly, this is essentially the same as your point
+estimate of 183. Not surprisingly, this is essentially the same as your point
 estimate. However, you now have a predictive distribution.
 
 Another possible step would be to layer in parameter risk since we might not be convinced of our
 selected lambda. You decide on letting lambda follow a chi-square distribution with degrees of
 freedom equal to your point estimate.
 
-```{r parameter_risk, include=FALSE}
-set.seed(314159)
 
-parameter_risk_lambda <- stats::rchisq(n = iterations, df = point_estimate)
-# summary(parameter_risk_lambda)
-
-parameter_risk_sample <- purrr::map_dbl(
-  .x = 1:iterations, 
-  .f = function(i) stats::rpois(n = 1, lambda = parameter_risk_lambda[i])
-)
-# summary(parameter_risk_sample)
-
-parameter_risk <- mean(parameter_risk_sample)
-```
 
 After running another 10,000 simulations, you're left with a central estimate of
-`r round(parameter_risk, 0)`. Even though we let lambda vary, the result is still quite close to the
+183. Even though we let lambda vary, the result is still quite close to the
 point estimate.
 
 But as we discussed earlier, there are a few problems with just relying on our data:
 
--   The sample size is on the low end (n = `r nrow(counts)`).
+-   The sample size is on the low end (n = 29).
 -   Regression to the mean.
 -   It might look like there is a "new normal" but you could be seeing a trend where there isn't
     one.
@@ -334,122 +272,20 @@ But as we discussed earlier, there are a few problems with just relying on our d
 How do we handle these possible biases? That's where Bayesian MCMC comes in. We'll continue with the
 distribution from our parameter risk model.
 
-```{r bayesian, include=FALSE}
-bayesian_stan_model <- rstan::stan(
-  model_code = '
-      data{
-        int<lower = 0> N;
-        int obs[N];
-        real<lower = 0> df;
-      }
-      
-      parameters {
-        real<lower = 0> lambda;
-      }
-    
-      model {
-        lambda ~ chi_square(df);
-        
-        for(i in 1:N) {
-          obs[i] ~ poisson(lambda);
-        }
-      }
-    ',
-  data = list(
-    N = nrow(counts), 
-    obs = counts$count,
-    df = point_estimate
-  ),
-  chains = 2,
-  iter = 10000,
-  warmup = 5000,
-  seed = 314159
-)
 
-# rstan::summary(bayesian_stan_model)
-
-bayesian_lambda <- rstan::extract(object = bayesian_stan_model, pars = 'lambda')[[1]]
-
-# summary(bayesian_lambda)
-
-set.seed(314159)
-
-bayesian_sample <- purrr::map_dbl(
-  .x = 1:iterations, 
-  .f = function(i) stats::rpois(n = 1, lambda = bayesian_lambda[i])
-)
-
-bayesian <- mean(bayesian_sample)
-```
 
 After running 10,000 simulations with your selected distribution, you're left with a central
-estimate of `r round(bayesian, 0)`. Since you used a wide prior, your result will be closer to the
-historical average (`r round(mean(counts$count), 0)`) than the point estimate
-(`r round(point_estimate, 0)`).
+estimate of 156. Since you used a wide prior, your result will be closer to the
+historical average (156) than the point estimate
+(183).
 
-Let's compare each result to the true number of earthquakes that occurred in 2012 (`r true_count`).
+Let's compare each result to the true number of earthquakes that occurred in 2012 (133).
 
-```{r compare_true, echo=FALSE, fig.width=6, fig.height=4}
-ggplot2::ggplot() +
-  ggplot2::theme_minimal() +
-  ggplot2::theme(
-    legend.position = 'bottom',
-    panel.grid.minor.x = ggplot2::element_blank(),
-    panel.grid.minor.y = ggplot2::element_blank()
-  ) +
-  ggplot2::scale_x_continuous(name = 'Counts') +
-  ggplot2::scale_y_continuous(name = 'Cumulative Probability', labels = scales::percent) +
-  ggplot2::scale_color_manual(
-    name = '',
-    labels = c(
-      'A' = 'Actual', 
-      'B' = 'Point Estimate', 
-      'C' = 'Process Risk', 
-      'D' = 'Parameter Risk', 
-      'E' = 'Bayesian'
-    ),
-    values = c(
-      'A' = '#FF8C00',
-      'B' = '#8096B2',
-      'C' = '#76D3FF',
-      'D' = '#009DE0',
-      'E' = '#002C77'
-    )
-  ) +
-  ggplot2::geom_line(
-    mapping = ggplot2::aes(
-      x = sort(process_risk_sample),
-      y = ecdf(process_risk_sample)(sort(process_risk_sample)),
-      group = 1, color = 'C'
-    )
-  ) +
-  ggplot2::geom_line(
-    mapping = ggplot2::aes(
-      x = sort(parameter_risk_sample),
-      y = ecdf(parameter_risk_sample)(sort(parameter_risk_sample)),
-      group = 1, color = 'D'
-    )
-  ) +
-  ggplot2::geom_line(
-    mapping = ggplot2::aes(
-      x = sort(bayesian_sample),
-      y = ecdf(bayesian_sample)(sort(bayesian_sample)),
-      group = 1, color = 'E'
-    )
-  ) +
-  ggplot2::geom_line(
-    mapping = ggplot2::aes(x = rep(point_estimate, 2), y = c(0, 1), group = 1, color = 'B'),
-    linetype = 'dashed'
-  ) +
-  ggplot2::geom_line(
-    mapping = ggplot2::aes(x = rep(true_count, 2), y = c(0, 1), group = 1, color = 'A'),
-    linetype = 'dashed'
-  )
-```
+![](C:/Users/spencer.miller/Documents/Repos/bayesian_mcmc_paper/paper_files/figure-latex/compare_true-1.pdf)<!-- --> 
 
 It appears that all four methods severely underestimated the true average losses. However, if we
 look at the Bayesian versus the other three, the true count is a more likely outcome.
-The "true count" is approximately equal to the `r scales::percent(length(bayesian_sample[bayesian_sample <= true_count]) / iterations, accuracy = 0.1)` confidence level of our Bayesian estimate. While this may still seem low, it is relatively close to the prportion of counts below `r true_count` (`r scales::percent(length(counts$count[counts$count <= true_count]) / nrow(counts), accuracy = 0.1)`).
+The "true count" is approximately equal to the 3.3% confidence level of our Bayesian estimate. While this may still seem low, it is relatively close to the prportion of counts below 133 (6.9%).
 
 Additionally, there are essentially no "extreme" values (225+) being simulated.
 
@@ -463,27 +299,7 @@ As it turns out, we fell prey to (at least) two key biases:
     was followed by a low average in 2012-2023. This resulted in the new all-year average
     (1983-2023) being nearly identical to the all-year average before the rise (1983-2006).
 
-```{r plot_full, echo=FALSE, fig.width=6, fig.height=4}
-gg_orig +
-  ggplot2::geom_col(
-    mapping = ggplot2::aes(
-      x = prosp_year,
-      y = true_count
-    ),
-    color = 'black',
-    fill = 'lightblue'
-  ) +
-  ggplot2::geom_col(
-    data = df[year %in% (prosp_year + 1):2023],
-    mapping = ggplot2::aes(
-      x = year,
-      y = count
-    ),
-    color = 'black',
-    fill = 'white'
-  )
-  
-```
+![](C:/Users/spencer.miller/Documents/Repos/bayesian_mcmc_paper/paper_files/figure-latex/plot_full-1.pdf)<!-- --> 
 
 # 6. Supplemental Information
 
