@@ -71,7 +71,7 @@
 \author{\\
 Spencer Miller\textsc{, fcas, maaa} \& Kenny Smart\textsc{, fcas,
 maaa}\\}
-\date{2025-09-22}
+\date{2025-10-28}
 
 \begin{document}
 \maketitle
@@ -353,8 +353,8 @@ brief overview of Bayesian MCMC.
 
 This process can be done using \textbf{Stan}, an open-source software,
 via common coding languages (e.g., python and R). In this paper, we
-leverage the RStan package, though there are numerous other packages
-that can be used.
+leverage the \texttt{rstan} package, though there are numerous other
+packages that can be used.
 
 \begin{itemize}
 \tightlist
@@ -550,5 +550,14 @@ Stan Development Team. 2025. ``\{RStan\}: The \{r\} Interface to
 
 Wickham, Hadley. 2016. ``Ggplot2: Elegant Graphics for Data Analysis.''
 \url{https://ggplot2.tidyverse.org}.
+
+\hypertarget{example-code}{%
+\subsection{6.6 Example Code}\label{example-code}}
+
+In this section, we provide a sample template for using the
+\texttt{rstan} package in R. The specific case demonstrated will be the
+estimation of accident year 2024 indemnity claim frequency (per 1,000
+employees) in the state of California. We'll use the last 20 years from
+the WCIRB's 2025 State of the System Report.
 
 \end{document}
