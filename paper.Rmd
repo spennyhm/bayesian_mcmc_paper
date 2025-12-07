@@ -2,6 +2,7 @@
 title: 'A Practical Guide to Using Bayesian Statistics'
 author: <p>Spencer Miller<span style='font-variant:small-caps'>, fcas, maaa</span> & Kenny Smart<span style='font-variant:small-caps'>, fcas, maaa</span></p>
 date: '`r Sys.Date()`'
+knit: (function(inputFile, encoding) {rmarkdown::render(inputFile, encoding = encoding, output_file = 'A Practical Guide to Using Bayesian Statistics')})
 output: 
   word_document:
     reference_docx: 'styles.docx'
