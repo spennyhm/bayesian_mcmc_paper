@@ -66,7 +66,7 @@ For example, when subjects were tasked with evaluating the likelihood of whether
 
 When presented with the seemingly uninformative description, subjects now estimated the relative likelihoods to be equal (50% & 50%). That is, they ignored the distribution of professions from the population (30% & 70%). Even though the description offers no clue as to what profession Dick might belong to, subjects ignored the distribution of professions for the populations.
 
-::: {style="background-color: yellow;"}
+:::{custom-style="Highlight"}
 Do we need an actuarial example?
 :::
 
@@ -88,7 +88,7 @@ Consider the following example. You are tasked with estimating the average ultim
 
 This is more commonly referred to as "regression to the mean," which is the concept that if we observe a higher-than-average value sampled from a known distribution, that one should expect the next sample to be closer to average. However, studies show that many subjects do not always recognize this phenomenon. They can either fail to believe regression is applicable in their specific scenario or they might "invent spurious causal explanations."
 
-::: {style="background-color: yellow;"}
+::: {custom-style="Highlight"}
 Do we need an actuarial example?
 :::
 
@@ -100,7 +100,7 @@ Suppose you're in charge of providing a loss forecast for the upcoming accident 
 
 # 3. Statistical Models
 
-::: {style="background-color: yellow;"}
+::: {custom-style="Highlight"}
 This section needs some expansion
 :::
 
@@ -132,7 +132,7 @@ Most people, and specifically actuaries, rely on frequentist statistics for thei
 | Computational Burden | Minimal                                                                         | Significant                                                                       |
 | End Result           | Probability of observing events based on distribution given a set of parameters | Describe parameters probabilistically based on observations and prior assumptions |
 
-::: {style="background-color: yellow;"}
+::: {custom-style="Highlight"}
 I like Alex's idea of having three columns instead but the last row needs refined
 :::
 
@@ -191,7 +191,7 @@ MCMC can be executed using Stan, an open-source software, via common coding lang
 
 In order to assess the model fit of a MCMC model, there are several diagnostics you can analyze. There are many parameters that help in the simulation process of MCMC (e.g., thinning), most of which are beyond the scope of this paper. However, two related parameters that are important to assessing model fit are iterations and chains. Iterations are simply the number of times you want the Monte Carlo process to repeat itself. Chains however, break up the iterations into segments. For example if we wanted to have 30,000 iterations, we could break this up into 3 chains of equal length of 10,000 iterations each. When a new chain is started, the Markov process starts from a new spot. In this example, we would have 3 random starting locations before beginning the 10,000 iterations each. This helps in understanding if the initial starting point influences the convergence of the chain (see discussion on trace plots below for more understanding).
 
-::: {style="background-color: yellow;"}
+::: {custom-style="Highlight"}
 I like Alex's idea of having tying this back to anchoring
 :::
 
@@ -205,7 +205,7 @@ Some model diagnostics to help assess the model fit:
 
     where n is the number of iterations and $\rho (k)$ is the correlation at lag k. We want a higher effective sample size relative to the number of total iterations in the simulation. For example, if we ran a model with 10,000 iterations, an effective sample size of 7,000 could be considered a positive sign that there is low correlation in the model, and an effective sample size of 200 would indicate that there is high correlation in the model.
 
-    ::: {style="background-color: yellow;"}
+    ::: {custom-style="Highlight"}
     Outstanding comments from Grant on n_eff
     :::
 
@@ -213,7 +213,7 @@ Some model diagnostics to help assess the model fit:
 
     ![](images/clipboard-1793822460.png){width="250"}![](images/clipboard-2720184601.png){width="250"}
 
-    ::: {style="background-color: yellow;"}
+    ::: {custom-style="Highlight"}
     Outstanding comments from Grant on converging
     :::
 
@@ -464,7 +464,7 @@ gg_orig +
   
 ```
 
-::: {style="background-color: yellow;"}
+::: {custom-style="Highlight"}
 Need some sort of conclusion. Consider Grant's comments.
 :::
 
@@ -494,7 +494,7 @@ Kenneth is a Senior Manager with Oliver Wyman Actuarial Consulting, Inc., locate
 
 ## 6.4 Citations
 
-::: {style="background-color: yellow;"}
+::: {custom-style="Highlight"}
 Need Kenny's citations still
 :::
 
