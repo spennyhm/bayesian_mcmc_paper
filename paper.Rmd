@@ -60,7 +60,13 @@ For a more salient example, consider the actuary's task of estimating the prospe
 
 When making a judgment of whether item X belongs to either class A or class B, people will assign it to the class in which the description of item X matches the stereotype of the class, despite the relative likelihood of each class.
 
-For example, when subjects were tasked with evaluating the likelihood of whether a randomly sampled person out of a pool of 30 engineers and 70 lawyers was a lawyer or an engineer, subjects correctly identified the relative likelihoods. However, when a description of the randomly sampled person was introduced, subjects "evaluated the likelihood that a particular description belonged to an engineer rather than to a lawyer ... with little or no regard for the prior probabilities of the two outcomes." Under this new condition, subjects estimated the likelihood to be 50/50.
+For example, when subjects were tasked with evaluating the likelihood of whether a randomly sampled person out of a pool of 30 engineers and 70 lawyers was a lawyer or an engineer, subjects correctly identified the relative likelihoods. However, when a description of the randomly sampled person was introduced, subjects "evaluated the likelihood that a particular description belonged to an engineer rather than to a lawyer ... with little or no regard for the prior probabilities of the two outcomes."
+
+When presented with the following seemingly uninformative description, subjects now estimated the likelihood to be 50/50 (i.e., they ignored the base rate of 30/70).
+
+> Dick is a 30-year old man. He is married with no children. A man of high ability and high motivation, he promises to be quite successful in his field. He is well liked by his colleagues.
+
+Even though the description offers no clue as to what profession Dick might belong to, subjects ignored the distribution of professions for the populations.
 
 ## 2.3 Misconception of chance
 
@@ -76,11 +82,11 @@ When making predictions, studies show that when given only a favorable or unfavo
 
 Consider the following example. You are tasked with estimating the average ultimate severity of claims occurring during the upcoming policy year. The recently hired risk manager tells you that there are new post-loss measures being put in place that will reduce the potential of large claims. Taking the risk manager’s assessment of the new claims handling process on faith could lead to deficient estimates.
 
-## 2.6 Misconceptions of Regression
+## 2.5 Regression to the Mean
 
 This is more commonly referred to as "regression to the mean." If we observe a string of higher than average values within a known distribution, one would expect lower than average values in the next few observations. However, studies show that many subjects do not always recognize this phenomenon. They can either fail to believe regression is applicable in their specific scenario or they might "invent spurious causal explanations."
 
-## 2.7 Anchoring
+## 2.6 Anchoring
 
 Suppose you're in charge of providing a loss forecast for the upcoming accident year and have been doing so for a few years. When making your selection, you are acutely aware of the estimate you provided last year. This prior estimate might be "anchoring" your estimate of the prospective year. While that may not be a bad thing, the issue arises when there is insufficient adjustment to the anchoring value.
 
@@ -94,7 +100,9 @@ But as we each have likely missed the mark on some projection at some point in o
 
 ## 3.1 A Review of Risks
 
-**--- This section needs some expansion ---**
+::: {style="background-color: yellow;"}
+This section needs some expansion
+:::
 
 A refresher on types of risk is required (Meyers):
 
@@ -145,7 +153,7 @@ A very important concept here is that applying Bayes' theorem in this way gives 
 
 ## 4.2 Markov Chain Monte Carlo (MCMC)
 
-MCMC is an effective way of using Bayesian statistics in actuarial models. By effective, we may you can use these methods so you no longer need to deal with the complex integral in the denominator of Bayes' theorem Lets start by breaking down the term Markov Chain Monte Carlo:
+MCMC is an effective way of using Bayesian statistics in actuarial models. By effective, we mean you can use these methods so you no longer need to deal with the complex integral in the denominator of Bayes' theorem. Lets start by breaking down the term Markov Chain Monte Carlo:
 
 -   A **Markov process** is a random process for which the future outcomes depends only on the present state.
 
@@ -157,7 +165,7 @@ It is easy to think about these two items separately but what might an example o
 
 Lets imagine we have a single frog on a pond covered in lily pads. The frog can jump from one lily pad to any of the other lily pads in the pond. The frog is more likely to jump to lily pads that are closer to them, but they can certainly hop all the way across the pond to another lily pad. The frog wants to find a good lily pad to sit on and get sunlight.
 
-Which lily pad the frog jumps to from its current lily pad is random, but certain lily pads are more likely because they are closer than lily pads that are further away. Another way of thinking about this that the next lily pad the frog jumps to has a distribution about it that is dependent only on the lily pad that the frog is currently on (i.e., this is a Markov process!).
+Which lily pad the frog jumps to from its current lily pad is random, but certain lily pads are more likely because they are closer than lily pads that are further away. Another way of thinking about this is that the next lily pad that the frog jumps to has a distribution about it that is dependent only on the lily pad that the frog is currently on (i.e., this is a Markov process!).
 
 Now, when the frog jumps to a new lily pad, the decision to stay on that lily pad is dependent on how much the frog likes that lily pad. The frog likes a lily pads based on how much sunlight they get there. This is merely a likelihood function! If the frog doesn’t like how much sunlight they get at the new lily pad, the forgetful frog ignores they ever jumped to it and goes back to the lily pad they jumped there from before jumping again.
 
@@ -171,7 +179,7 @@ This silly example is a version of the Metropolis-Hastings algorithm, which is a
 
 ## 4.3 Execution of MCMC
 
-This process can be done using Stan, an open-source software, via common coding languages (e.g., python and R). Later in this paper we dive into a comparison of MCMC fits verse traditional methods and provide a real example of fitting an MCMC process. In this paper, we leverage the RStan package, though there are numerous other packages that can be used (RStan leverages Hamiltonian Monte Carlo).
+This process can be done using Stan, an open-source software, via common coding languages (e.g., Python and R). Later in this paper we dive into a comparison of MCMC fits verses traditional methods and provide a real example of fitting an MCMC process. In this paper, we leverage the RStan package, though there are numerous other packages that can be used (RStan leverages Hamiltonian Monte Carlo).
 
 In order to assess the model fit of a MCMC model, there are several diagnostics you can look at. There are many parameters that help in the simulation process of MCMC (e.g., thinning), most of which are beyond the scope of this paper. However, two related parameters that are important to assessing model fit are iterations and chains. Iterations are simply the number of times you want the Monte Carlo process to repeat itself. Chains however, break up the iterations into segments. For example if we wanted to have 30,000 iterations, we could break this up into 3 chains of equal length of 10,000 iterations each. When a new chain is started, the Markov process starts from a new spot. In this example, we would have 3 random starting locations before beginning the 10,000 iterations each. This helps in understanding if the initial starting point influences the convergence of the chain (see discussion on trace plots below for more understanding).
 
@@ -185,9 +193,17 @@ Some model diagnostics to help assess the model fit.
 
     Where n is the number of iterations and $\rho (k)$ is the correlation at lag k. We want a higher effective sample size relative to the number of total iterations in the simulation. For example, if we ran a model with 10,000 iterations, an effective sample size of 7,000 could be considered a positive sign that there is low correlation in the model, and an effective sample size of 200 would indicate that there is high correlation in the model.
 
+    ::: {style="background-color: yellow;"}
+    Outstanding comments from Grant on n_eff
+    :::
+
 -   Trace plots show the results of the MCMC model in sequential order of the simulation. Since the output of our model is parameter estimates, we would create a trace plot for each parameter with the iteration number as the x-axis and the corresponding simulated parameter value as the y-value and draw a connecting line so we can see the path of the simulation. Ideally, we would want a trace plot to appear random, like white noise, as a sign of well mixing models and well converged chains. Below comparing the left and right plot, the left plot is an example of well mixed trace plot result, the points appear random, no specific pattern in the lines, and all 3 chains are converging over the same region. The plot on the right is a not well mixed model, as we see the orange line has a much higher mean across all iterations than the pink or blue lines.
 
     ![](images/clipboard-1793822460.png){width="250"}![](images/clipboard-2720184601.png){width="250"}
+
+    ::: {style="background-color: yellow;"}
+    Outstanding comments from Grant on converging
+    :::
 
 # 5. An Example in Action
 
@@ -331,7 +347,7 @@ bayesian_sample <- purrr::map_dbl(
 bayesian <- mean(bayesian_sample)
 ```
 
-After running 10,000 simulations with your selected distribution, you're left with a central estimate of `r round(bayesian, 2)`. Since you used a wide prior, your result will be closer to the historical average (`r round(mean(counts$count), 2)`) than the point estimate (`r round(point_estimate, 2)`).
+After running 10,000 simulations with your selected distribution, you're left with a central estimate of `r round(bayesian, 2)`. Since you used a vague prior (i.e., "wide", "uninformative", "weak"), your result will be closer to the historical average (`r round(mean(counts$count), 2)`) than the point estimate (`r round(point_estimate, 2)`).
 
 Let's compare each result to the true number of earthquakes that occurred in 2012 (`r true_count`).
 
@@ -400,7 +416,7 @@ Additionally, there are essentially no "extreme" values (225+) being simulated.
 With the benefit of hindsight, let's see why we overestimated the true counts in all four methods. As it turns out, we fell prey to (at least) two key biases:
 
 -   Humans just aren't that great at identifying random processes. For example, a series of coin tosses with all heads is seen as "less random" than a series with alternating heads and tails, even though both results are equally likely.
--   As seen in the chart, the high average for 2007-2011 was followed by a low average in 2012-2023. This resulted in the new all-year average (1983-2023) being nearly identical to the all-year average before the rise (1983-2006).
+-   As seen in the chart below, the high average for 2007-2011 was followed by a low average in 2012-2023. This resulted in the new all-year average (1983-2023) being nearly identical to the all-year average before the rise (1983-2006).
 
 ```{r plot_full, echo=FALSE, fig.width=6, fig.height=4}
 gg_orig +
@@ -423,6 +439,10 @@ gg_orig +
   )
   
 ```
+
+::: {style="background-color: yellow;"}
+Need some sort of conclusion. Consider Grant's comments.
+:::
 
 # 6. Supplemental Information
 
@@ -450,7 +470,9 @@ Kenny is a Senior Manager with Oliver Wyman Actuarial Consulting, Inc, located i
 
 ## 6.4 Citations
 
-**--- Need citations for KS sections ---**
+::: {style="background-color: yellow;"}
+Need Kenny's citations still
+:::
 
 A. Tversky, and D. Kahneman. 1974. "Judgment Under Uncertainty: Heuristics and Biases." Science 185, 1124–1131.
 
