@@ -86,7 +86,7 @@ Consider the following example. You are tasked with estimating the average ultim
 
 ## 2.5 Regression to the Mean
 
-This is more commonly referred to as "regression to the mean," which is the concept that if we observe a higher-than-average value sampled from a known distribution, that one should expect the next sample to be closer to average. However, studies show that many subjects do not always recognize this phenomenon. They can either fail to believe regression is applicable in their specific scenario or they might "invent spurious causal explanations."
+This is the concept that if we observe a higher-than-average value sampled from a known distribution, that one should expect the next sample to be closer to average. However, studies show that many subjects do not always recognize this phenomenon. They can either fail to believe regression is applicable in their specific scenario or they might "invent spurious causal explanations."
 
 ::: {custom-style="Highlight"}
 Do we need an actuarial example?
