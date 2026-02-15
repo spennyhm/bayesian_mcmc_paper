@@ -13,12 +13,12 @@ abstract: 'This paper seeks to provide a practical guide for actuaries to levera
 
 # 1. Introduction
 
-Much has been written in the actuarial literature about Bayesian statistical methods over the last couple decades; few of which are still part of current exam syllabi. While these papers provide a thorough explanation of the process, the math can seem overly complex even to an experienced actuary. The purpose of this paper is twofold. First, we want to provide actuaries with a *basic* understanding of what goes on behind the scenes of a Bayesian model without getting bogged down in the underlying calculations. Second, we want to champion the continued inclusion of these topics on exam syllabi in the future.
+Much has been written in the actuarial literature about Bayesian statistical methods over the last couple decades, few of which are still part of current exam syllabi. While these papers provide a thorough explanation of the process, the math can seem overly complex even to an experienced actuary. The purpose of this paper is twofold. First, we want to provide actuaries with a *basic* understanding of what goes on behind the scenes of a Bayesian model without getting bogged down in the underlying calculations. Second, we want to champion the continued inclusion of these topics on exam syllabi in the future.
 
 While we believe this paper is beneficial to everyone in the profession, we view the following as the target audience:
 
 -   An actuary who finished exams a few years ago and wants to ease their way into Bayesian methods.
--   An actuary who occasionally finds their estimates to be out of line with results with no discernible reason.
+-   An actuary who occasionally finds their estimates to be out of line with results, with no discernible reason.
 -   An actuary who is interested in learning about Bayesian methods but finds the math too onerous or intimidating.
 -   An actuary with limited data.
 
@@ -26,7 +26,7 @@ In Section 2, we give a brief lesson in behavioral economics and highlight poten
 
 In Section 3, we review a few common methods of making predictions and examining their strengths and weaknesses.
 
-In Section 4, we give a primer on the basics of Bayesian statistics and introduce Markov Chain Monte Carle (MCMC) methods.
+In Section 4, we give a primer on the basics of Bayesian statistics and introduce Markov Chain Monte Carlo (MCMC) methods.
 
 In Section 5, we use a real-life example to show how the underlying biases in Section 2 can impact some of the prediction methods from Section 3 and how using Bayesian methods can provide a more realistic range of reasonable estimates.
 
@@ -34,7 +34,7 @@ In Section 6, we provide the reader with additional resources to further explore
 
 # 2. A Lesson in Behavioral Economics
 
-When making predictions, people often rely on mental operations ("heuristics"). While these are typically useful from an evolutionary standpoint, they can lead to "... systematic and predictable errors". Below is a non-exhaustive list of possible factors at play when making actuarial predictions along with key examples (Tversky & Kahnemann).
+When making predictions, people often rely on mental operations ("heuristics"). While these may be useful from an evolutionary standpoint, they can lead to "... systematic and predictable errors". Below is a non-exhaustive list of possible factors at play when making actuarial predictions, along with key examples from "Judgment Under Uncertainty: Heuristics and Biases" by Tversky & Kahnemann.
 
 ## 2.1 Insensitivity to Sample Size
 
@@ -54,7 +54,7 @@ For example, subjects were given the following problem:
 
 The majority of subjects said the numbers of days would be about the same, while the minority of subjects were split evenly between the larger and smaller hospitals. According to sampling theory, there will be more such days in the smaller hospital since smaller populations generally experience more volatility.
 
-For a more salient example, consider the actuary's task of estimating the prospective loss ratio for a given book of business when they only have two years of data. If the industry loss ratios and the historical loss ratios for that exposure are both consistently in the 75-80% range, one might expect the prospective loss ratio for your book and the industry to be similar. However, the volatility in loss ratios will be greater for your book than for the industry.
+For a more salient example, consider the actuary's task of estimating the prospective loss ratio for a given book of business when they only have two years of data. If the industry loss ratios and the company's loss ratios for that exposure are both consistently in the 75-80% range, one might expect the prospective loss ratio for your book and the industry to be similar. However, the volatility in loss ratios will be greater for your book than for the industry.
 
 ## 2.2 Insensitivity to the Prior Probability of Outcomes
 
@@ -66,31 +66,29 @@ For example, when subjects were tasked with evaluating the likelihood of whether
 
 When presented with the seemingly uninformative description, subjects now estimated the relative likelihoods to be equal (50% & 50%). That is, they ignored the distribution of professions from the population (30% & 70%). Even though the description offers no clue as to what profession Dick might belong to, subjects ignored the distribution of professions for the populations.
 
-:::{custom-style="Highlight"}
+::: {custom-style="Highlight"}
 Do we need an actuarial example?
 :::
 
 ## 2.3 Misconception of Chance
 
-People will expect even a short sample of random events to "look random." For example, when shown two sets of a random sequences of coin tosses, subjects will judge "HTHTTH" to be more likely than "HHHTTT", despite the two sets being equally likely.
+People will expect even a short sample of random events to "look random." For example, when shown two sets of a random sequences of fair coin tosses, subjects will judge "HTHTTH" to be more likely than "HHHTTT", despite the two sets being equally likely.
 
-For an example from our profession, consider the task of selecting trend rates for a company's given book of business. While we try to incorporate external information in our selections (hard versus soft market, inflation, changes in business practices, etc.), there will always be a tendency to "eyeball" trend lines - even when the data points have no clear trend. In other words, is that trendline is actually increasing or are those last few points elevated merely by chance?
+For an example from our profession, consider the task of selecting trend rates for a company's given book of business. While we try to incorporate external information in our selections (hard versus soft market, inflation, changes in business practices, etc.), there will always be a tendency to "eyeball" trend lines - even when the data points have no clear trend. In other words, is that trendline actually increasing or are those last few points elevated merely by chance?
 
-While we would like to think that actuaries would be immune to this particular bias, even experienced research psychologists believe they can reach a valid hypothesis by relying on small samples deemed "highly representative of the populations from which they are drawn". As a result, they "... put too much faith in the results of small samples, and grossly overestimated the replicability of such results."
+While we would like to think that actuaries would be immune to this particular bias, even experienced research psychologists believe they can reach a valid hypothesis by relying on small samples deemed "highly representative of the populations from which they are drawn." As a result, they "... put too much faith in the results of small samples, and grossly overestimated the replicability of such results."
 
 ## 2.4 Insensitivity to Predictive Accuracy
 
-When making predictions, studies show that when given only a favorable or unfavorable description of something, subjects' predictions were "insensitive to the reliability of the description." In other words, people tend to take a description at face value, with little regard to the credibility of the description.
+When making predictions, studies show that when given only a favorable or unfavorable description, subjects' predictions were "insensitive to the reliability of the description." In other words, people tend to take a description at face value, with little regard to the credibility of the description.
 
-Consider the following example. You are tasked with estimating the average ultimate severity of claims occurring during the upcoming policy year. The recently hired risk manager tells you that there are new post-loss measures being put in place that will reduce the potential of large claims. Taking the risk manager’s assessment of the new claims handling process on faith could lead to deficient estimates.
+Consider the following example. You are tasked with estimating the average ultimate severity of claims occurring during the upcoming policy year. The recently hired risk manager tells you that there are new post-loss measures being put in place that will reduce the potential of large claims. Taking the risk manager’s assessment of the new claims handling process without support could lead to deficient estimates.
 
 ## 2.5 Regression to the Mean
 
 This is the concept that if we observe a higher-than-average value sampled from a known distribution, that one should expect the next sample to be closer to average. However, studies show that many subjects do not always recognize this phenomenon. They can either fail to believe regression is applicable in their specific scenario or they might "invent spurious causal explanations."
 
-::: {custom-style="Highlight"}
-Do we need an actuarial example?
-:::
+In the case of forecasting losses, one might experience this phenomenom. Suppose losses are generally stable year-over-year, but the most recent year unexplicably dropped 20% relative to the prior year. How much weight should we give this possible outlier? Do we give the most weight to the average? While there is no right answer, being aware of this potential bias will allow you to make a more well-informed decision.
 
 ## 2.6 Anchoring
 
@@ -99,6 +97,8 @@ In one study, subjects were tasked with estimating the percentage of African cou
 Suppose you're in charge of providing a loss forecast for the upcoming accident year and have been doing so for a few years. When making your selection, you are acutely aware of the estimate you provided last year (i.e., the "initial value"). This prior estimate might be "anchoring" your estimate of the prospective year. While that may not be a bad thing, issues may arise when there is insufficient adjustment to the anchoring value.
 
 # 3. Statistical Models
+
+## 3.1 Background
 
 ::: {custom-style="Highlight"}
 This section needs some expansion
@@ -114,7 +114,7 @@ The "actuarial central estimates" is a cornerstone of our profession. It reflect
 
 As we each have likely missed the mark on a projection at some point in our careers, it is worth reflecting on those misses. Were they due to chance (e.g., process risk), did we fail to adequately capture possible alternatives (e.g., parameter risk), or was there some underlying bias that caused us to see a trend that wasn't actually there?
 
-## 3.1 Statistical Schools of Thought
+## 3.2 Statistical Schools of Thought
 
 Two common schools of statistical thinking are 1) Frequentist and 2) Bayesian.
 
@@ -124,19 +124,19 @@ Bayesian statistics may sound familiar to you, as the core of Bayesian statistic
 
 Most people, and specifically actuaries, rely on frequentist statistics for their analyses. Some of the main distinctions between the two types of inference are:
 
-|                      | Frequentist                                                                     | Bayesian                                                                          |
-|----------------------|---------------------------------------------------------------------------------|-----------------------------------------------------------------------------------|
-| Observed Data        | Repeatable and random events                                                    | Known and fixed sample                                                            |
-| Parameters           | Fixed values                                                                    | Unknown                                                                           |
-| View on Probability  | Objective                                                                       | Subjective                                                                        |
-| Computational Burden | Minimal                                                                         | Significant                                                                       |
-| End Result           | Probability of observing events based on distribution given a set of parameters | Describe parameters probabilistically based on observations and prior assumptions |
+|                      | Frequentist                                                                       | Bayesian                                                                          |
+|------------------|---------------------------|---------------------------|
+| Observed Data        | Repeatable and random events                                                      | Known and fixed sample                                                            |
+| Parameters           | Fixed values                                                                      | Unknown                                                                           |
+| View on Probability  | Objective                                                                         | Subjective                                                                        |
+| Computational Burden | Minimal                                                                           | Significant                                                                       |
+| End Result           | Probability of observing events based on a distribution given a set of parameters | Describe parameters probabilistically based on observations and prior assumptions |
 
 ::: {custom-style="Highlight"}
 I like Alex's idea of having three columns instead but the last row needs refined
 :::
 
-Upon reviewing these fundamentals, we would argue that actuarial math (as with most predictive statistics) is inherently Bayesian at its core. As actuaries, we typically know historical claim information and can say that claims and events are a known fixed sample of observations. When predicting future claims or development on claims, we don’t know the parameters under which circumstances are to arise, however, given the historical information and our expertise we can describe some basis of prior assumption about the parameters. Finally, as we want to capture as much risk in our modelling as possible, a frequentist approach typically lacks parameter risk if parameters are fixed.
+Upon reviewing these fundamentals, we would argue that actuarial math (as with most predictive statistics) is inherently Bayesian at its core. As actuaries, we typically know historical claim information and can say that claims and events are a known abd fixed sample of observations. When predicting future claims or development on claims, we don’t know the underlying parameters, however, given the historical information and our expertise we can describe some basis of prior assumption about the parameters. Finally, as we want to capture as much risk in our modelling as possible, a frequentist approach typically lacks parameter risk if parameters are fixed.
 
 As such, Bayesian statistics can greatly improve actuarial models by incorporating parameter risk without really changing our view on known information. Bayesian methods allow for the incorporation of prior knowledge (or what we like to call actuarial judgement) into our prior assumptions to influence our models. Lastly, technological advances have made Bayesian modeling more accessible by minimizing the computationally intensive hurdles.
 
@@ -144,7 +144,7 @@ As such, Bayesian statistics can greatly improve actuarial models by incorporati
 
 ## 4.1 Basics of Bayesian Statistics
 
-As mentioned previously, the foundation of Bayesian statistics is Bayes' theorem. To give a brief refresher on what Bayes' theorem is and how it works: Bayes' theorem describes how to adjust a prior assumption to get a new updated assumption (posterior) accounting for new information provided (historical evidence). It is represented by the formula below.
+As mentioned previously, the foundation of Bayesian statistics is Bayes' theorem. To give a brief refresher on what Bayes' theorem is and how it works: Bayes' theorem describes how to adjust a prior assumption to get a new updated assumption (posterior) accounting for new information provided (historical evidence). It is represented by the formula below. Starting with the traditional definition where X and Y are some event and transforming it into our context where $\theta$ represents the parameter space we intend to estimate.
 
 $P(Y|X) = \frac{P(X|Y)}{P(X)} = \frac{f(X|Y)(f(Y)}{\int_{-\infty}^{\infty} f(X|Y)(f(Y)dy} = \frac{f(data|\theta)*f(\theta)}{\int f(data|\theta)*f(\theta)d\theta} = P(\theta|data)$
 
@@ -167,9 +167,13 @@ MCMC methods are an effective way of using Bayesian statistics in actuarial mode
 
 -   **Monte Carlo** methods use random sampling to approximate an outcome.
 
--   Putting **Markov process** and **Monte Carlo** methods together, MCMC is a way to gather a representation of the true but incalculable posterior distribution via simulation and repeated sampling.
+-   Putting **Markov process** and **Monte Carlo** methods together, MCMC is a way to gather a representation of the posterior distribution via simulation and repeated sampling.
 
 It is easy to think about these two items separately, but what might an example of this look like in action?
+
+::: {custom-style="Highlight"}
+This section needs to cite the source of the example. There are also a few outstanding comments from Raj.
+:::
 
 Imagine there is a single frog on a pond covered in lily pads. The frog can jump from one lily pad to any of the other lily pads in the pond. The frog is more likely to jump to lily pads that are closer to it, but it can certainly hop all the way across the pond to another lily pad. The frog wants to find a good lily pad to sit on and get sunlight.
 
@@ -177,13 +181,13 @@ Which lily pad the frog jumps to from its current lily pad is random, but there 
 
 Now, when the frog jumps to a new lily pad, the decision to stay on that lily pad is dependent on how much the frog likes that lily pad. The frog likes a lily pads based on how much sunlight it gets there (i.e., this is a likelihood function). If the frog doesn’t like how much sunlight it gets at the new lily pad, imagine that the frog forgets that it ever jumped to it and goes back to their previous lily pad before jumping again.
 
-It’s an indecisive frog so it doesn’t want to stay on the same lily pad, and so the frog will keep jumping around all day long from lily pad to lily pad (i.e., this a Monte Carlo process). At the end of the day, the frog will have spent more time on lily pads that got the most sunlight, and less time at those in the shade that weren’t the right fit for the frog.
+It’s an indecisive frog so it doesn’t want to stay on the same lily pad, and so the frog will keep jumping from lily pad to lily pad (i.e., this a Monte Carlo process). At the end of the day, the frog will have spent more time on lily pads that got the most sunlight, and less time at those in the shade that weren’t the right fit for the frog.
 
 Hopefully, this is starting to paint a picture of what an MCMC process looks like and how the Markov chain and Monte Carlo simulation pieces fit together.
 
 Extrapolating this example out to statistical terms, if we think about the lily pads as being different parameter spaces, the frog jumps around from parameter space to parameter space trying to find one that fits the frog’s needs well. We can think about the frog liking a certain lily pad as how well the parameter space (e.g., the given lily pad) describes the observed data (e.g., the amount of sunlight). This is just a likelihood function (i.e., what is the likelihood of the data given the parameter space). In an MCMC simulation, if that likelihood is above or below some random simulated threshold, we will accept or reject the parameter space (e.g., will the frog stay at that lily pad or go back to the one it jumped there from). Finally, if we observe which lily pads the frog spends the most time on, we can end up with a distribution of which lily pads the frog liked best. In statistical terms, this equates to which parameter spaces that are most likely to describe the data.
 
-This silly example is a version of the Metropolis-Hastings algorithm, which is a form of an MCMC process. There are several forms of MCMC processes: Gibbs sampling, Metropolis Hastings, Hamiltonian Monte Carlo, etc. The specifics of how each one works are beyond the scope of this paper.
+This example is a version of the Metropolis-Hastings algorithm, which is a form of an MCMC process. There are several forms of MCMC processes: Gibbs sampling, Metropolis-Hastings, Hamiltonian Monte Carlo, etc. The specifics of how each one works are beyond the scope of this paper.
 
 ## 4.3 Execution of MCMC
 
@@ -193,6 +197,10 @@ In order to assess the model fit of a MCMC model, there are several diagnostics 
 
 ::: {custom-style="Highlight"}
 I like Alex's idea of having tying this back to anchoring
+:::
+
+::: {custom-style="Highlight"}
+See Jaylen's comment on the above paragraph
 :::
 
 Some model diagnostics to help assess the model fit:
@@ -274,14 +282,27 @@ gg_orig <- ggplot2::ggplot() +
       yintercept = mean(counts$count),
       color = 'All-Year Average'
     )
+  ) +
+  ggplot2::geom_text(
+    mapping = ggplot2::aes(
+      x = 1987,
+      y = point_estimate,
+      label = paste0('Point Estimate = ', round(point_estimate, 2))
+    ),
+    vjust = -0.5,
+    size = 3
   )
 
 gg_orig
 ```
 
-In the simplest case, you may decide given the recent trend, that the five-year average is the best approximation of future frequency. In this case, your selected frequency is `r round(point_estimate, 2)` ("Point Estimate").
+In the simplest case, you may decide given the recent trend, that the five-year average is the best approximation of future frequency. In this case, your selected frequency is `r round(point_estimate, 2)` ("Point Estimate"). This approach is consistent with the frequentist methods described earlier and can be written as follows:
 
-Your next logical step might be to add some process risk around your estimate by fitting a distribution to the data. Based on an examination of the data, you decide to model frequency using the Poisson distribution with lambda = `r round(point_estimate, 0)`.
+$X = `r round(point_estimate, 2)`$
+
+Your next logical step might be to add some process risk around your estimate by fitting a distribution to the data. Based on an examination of the data, you decide to model frequency using the Poisson distribution with lambda = `r round(point_estimate, 2)`. This can written as follows:
+
+$X \sim Pois(\lambda = `r round(point_estimate, 2)`)$
 
 ```{r process_risk, include=FALSE}
 process_risk_lambda <- point_estimate
@@ -296,7 +317,9 @@ process_risk <- mean(process_risk_sample)
 
 After running 10,000 simulations with your selected distribution, you're left with a central estimate of `r round(process_risk, 2)`. Not surprisingly, this is essentially the same as your point estimate. However, you now have a predictive distribution.
 
-Another possible step would be to layer in parameter risk since we might not be convinced of our selected lambda. You decide on letting lambda follow a chi-square distribution with degrees of freedom equal to your point estimate.
+Another possible step would be to layer in parameter risk since we might not be convinced of our selected lambda. You decide on letting lambda follow a chi-square distribution with degrees of freedom equal to your point estimate. This can written as follows:
+
+$X \sim Pois(\lambda \sim ChiSquare(d.f. = `r round(point_estimate, 2)`))$
 
 ```{r parameter_risk, include=FALSE}
 set.seed(314159)
@@ -318,10 +341,12 @@ After running another 10,000 simulations, you're left with a central estimate of
 But as we discussed earlier, there are a few problems with just relying on our data:
 
 -   The sample size is on the low end (n = `r nrow(counts)`).
--   Regression to the mean.
+-   How much weight do you give to recent experience?
 -   It might look like there is a "new normal", but you could be seeing a trend where there isn't one.
 
-How do we handle these possible biases? That's where Bayesian MCMC comes in. We'll continue with the distribution from our parameter risk model.
+How do we handle these possible biases? That's where Bayesian MCMC comes in. We'll continue with the distribution from our parameter risk model but now we let our data inform the simulated lambda value. As an example, if our chi-square simulated lambda is 231 (99th percentile of our chi-square distribution) but the largest data point is only 207, that iteration may not get used (i.e., the frog jumped back to its previous lily pad). This can be written as follows:
+
+$X|data \sim Pois(\lambda \sim ChiSquare(d.f. = `r round(point_estimate, 2)`))$
 
 ```{r bayesian, include=FALSE}
 bayesian_stan_model <- rstan::stan(
@@ -371,7 +396,13 @@ bayesian_sample <- purrr::map_dbl(
 bayesian <- mean(bayesian_sample)
 ```
 
-After running 10,000 simulations with your selected distribution, you're left with a central estimate of `r round(bayesian, 2)`. Since you took an objective view (i.e., "wide", "uninformative", "weak", "vague") of your prior distribution, your result will be closer to the historical average (`r round(mean(counts$count), 2)`) than the point estimate (`r round(point_estimate, 2)`). If instead you had strong reason to believe that there would be `r round(point_estimate, 2)` earthquakes, you may opt for a "stronger" prior by letting $\lambda$ have a much tighter distribution around the mean.
+After running 10,000 simulations with your selected distribution, you're left with a central estimate of `r round(bayesian, 2)`. Since you took an objective view (i.e., "wide", "uninformative", "weak", "vague") of your prior distribution, your result will be closer to the historical average (`r round(mean(counts$count), 2)`) than the point estimate (`r round(point_estimate, 2)`).
+
+::: {custom-style="Highlight"}
+let's add chart showing wide vs narrow prior?
+:::
+
+If instead you had strong reason to believe that there would be `r round(point_estimate, 2)` earthquakes, you may opt for a "stronger" prior by letting $\lambda$ have a much tighter distribution around the mean.
 
 Let's compare each result to the true number of earthquakes that occurred in 2012 (`r true_count`).
 
