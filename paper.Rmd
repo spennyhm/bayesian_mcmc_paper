@@ -32,6 +32,8 @@ In Section 5, we use a real-life example to show how the underlying biases in Se
 
 In Section 6, we provide the reader with additional resources to further explore these topics.
 
+This paper was written using R Markdown. The underlying code is available as a supplementary file. Where beneficial, we show the code in the body of the paper. Sample code for setting up a possible model is included at the end of the paper.
+
 # 2. A Lesson in Behavioral Economics
 
 When making predictions, people often rely on mental operations ("heuristics"). While these may be useful from an evolutionary standpoint, they can lead to "... systematic and predictable errors". Below is a non-exhaustive list of possible factors at play when making actuarial predictions, along with key examples from "Judgment Under Uncertainty: Heuristics and Biases" by Tversky & Kahnemann.
@@ -67,7 +69,7 @@ For example, when subjects were tasked with evaluating the likelihood of whether
 When presented with the seemingly uninformative description, subjects now estimated the relative likelihoods to be equal (50% & 50%). That is, they ignored the distribution of professions from the population (30% & 70%). Even though the description offers no clue as to what profession Dick might belong to, subjects ignored the distribution of professions for the populations.
 
 ::: {custom-style="Highlight"}
-Do we need an actuarial example?
+Still need an example. If none come to mind, just might delete this one.
 :::
 
 ## 2.3 Misconception of Chance
@@ -100,19 +102,15 @@ Suppose you're in charge of providing a loss forecast for the upcoming accident 
 
 ## 3.1 Background
 
-::: {custom-style="Highlight"}
-This section needs some expansion
-:::
+The "actuarial central estimate" is a cornerstone of our profession. It reflects the culmination of years of studying and practice. For a lot of our work, it's all that is typically required. After all, we're seen as the experts and you'd be hard-pressed to find an end user of our work that is as concerned about confidence levels as we are.
 
-A refresher on types of risk is required (Meyers):
+As we each have likely missed the mark on a projection at some point in our careers, it is worth reflecting on those misses. Were they due to chance (e.g., process risk), did we fail to adequately capture possible alternatives (e.g., model risk), or was there some underlying bias that caused us to see a trend that wasn't actually there? There are a lot of risks that are not captured when solely relying on point estimates. We list a few of these risks below (Venter & Sahasrabuddhe):
 
--   Process Risk: Average variance of the outcomes from the expected results.
--   Parameter Risk: Variance due to the many possible parameters.
--   Model Risk: The risk that one did not select the right model.
-
-The "actuarial central estimates" is a cornerstone of our profession. It reflects the culmination of years of studying and practice. For a lot of our work, it's all that is typically required. After all, we're seen as the experts and you'd be hard-pressed to find an end user of our work that is as concerned about confidence levels as we are.
-
-As we each have likely missed the mark on a projection at some point in our careers, it is worth reflecting on those misses. Were they due to chance (e.g., process risk), did we fail to adequately capture possible alternatives (e.g., parameter risk), or was there some underlying bias that caused us to see a trend that wasn't actually there?
+-   Process Risk: Inherent uncertainty of the insurance claims process.
+-   Sampling Risk: Differences between observed sample and the population.
+-   Data Bias: Results from incorrectly adjusting data in experience period to be on same basis (e.g., cost level) as the exposure period.
+-   Model Misspecification: The risk that one did not select the right model.
+-   Insufficient Parameter Identification: Results when we fail to consider the uncertainty of our model elements.
 
 ## 3.2 Statistical Schools of Thought
 
@@ -132,11 +130,7 @@ Most people, and specifically actuaries, rely on frequentist statistics for thei
 | Computational Burden | Minimal                                                                           | Significant                                                                       |
 | End Result           | Probability of observing events based on a distribution given a set of parameters | Describe parameters probabilistically based on observations and prior assumptions |
 
-::: {custom-style="Highlight"}
-I like Alex's idea of having three columns instead but the last row needs refined
-:::
-
-Upon reviewing these fundamentals, we would argue that actuarial math (as with most predictive statistics) is inherently Bayesian at its core. As actuaries, we typically know historical claim information and can say that claims and events are a known abd fixed sample of observations. When predicting future claims or development on claims, we don’t know the underlying parameters, however, given the historical information and our expertise we can describe some basis of prior assumption about the parameters. Finally, as we want to capture as much risk in our modelling as possible, a frequentist approach typically lacks parameter risk if parameters are fixed.
+Upon reviewing these fundamentals, we would argue that actuarial math (as with most predictive statistics) is inherently Bayesian at its core. As actuaries, we typically know historical claim information and can say that claims and events are a known and fixed sample of observations. When predicting future claims or development on claims, we don’t know the underlying parameters, however, given the historical information and our expertise we can describe some basis of prior assumption about the parameters. Finally, as we want to capture as much risk in our modelling as possible, a frequentist approach typically lacks parameter risk if parameters are fixed.
 
 As such, Bayesian statistics can greatly improve actuarial models by incorporating parameter risk without really changing our view on known information. Bayesian methods allow for the incorporation of prior knowledge (or what we like to call actuarial judgement) into our prior assumptions to influence our models. Lastly, technological advances have made Bayesian modeling more accessible by minimizing the computationally intensive hurdles.
 
@@ -156,6 +150,10 @@ We can break Bayes' theorem down into 4 components:
 4.  The posterior $P(\theta|data)$ — the result, which is the modified probability of the parameter space after accounting for the data.
 
 A very important concept here is that applying Bayes' theorem in this way gives us probabilities of the parameter space. We do not get a result of the potential observations. Below we visualize what is happening with Baye’s theorem in this context: we are producing an updated posterior, given the prior information and the likelihood.
+
+::: {custom-style="Highlight"}
+Can we revise this chart to have a wide and narrow prior? We need to have a small blurb on the difference.
+:::
 
 ![](images/clipboard-757884006.png){width="513"}
 
@@ -193,7 +191,49 @@ This example is a version of the Metropolis-Hastings algorithm, which is a form 
 
 MCMC can be executed using Stan, an open-source software, via common coding languages (e.g., Python and R). Later in this paper we dive into a comparison of MCMC fits verses traditional methods and provide a real example of fitting an MCMC process. In this paper, we leverage the RStan package, though there are numerous other packages that can be used (RStan leverages Hamiltonian Monte Carlo).
 
-In order to assess the model fit of a MCMC model, there are several diagnostics you can analyze. There are many parameters that help in the simulation process of MCMC (e.g., thinning), most of which are beyond the scope of this paper. However, two related parameters that are important to assessing model fit are iterations and chains. Iterations are simply the number of times you want the Monte Carlo process to repeat itself. Chains however, break up the iterations into segments. For example if we wanted to have 30,000 iterations, we could break this up into 3 chains of equal length of 10,000 iterations each. When a new chain is started, the Markov process starts from a new spot. In this example, we would have 3 random starting locations before beginning the 10,000 iterations each. This helps in understanding if the initial starting point influences the convergence of the chain (see discussion on trace plots below for more understanding).
+In order to assess the model fit of a MCMC model, there are several diagnostics you can analyze. There are many parameters that help in the simulation process of MCMC (e.g., thinning), most of which are beyond the scope of this paper. However, two related parameters that are important to assessing model fit are iterations and chains. Iterations are simply the number of times you want the Monte Carlo process to repeat itself. Chains however, break up the iterations into segments. For example if we wanted to have 30,000 iterations, we could break this up into 3 chains of equal length of 10,000 iterations each. When a new chain is started, the Markov process starts from a new spot. In this example, we would have 3 random starting locations before beginning the 10,000 iterations each. This helps in understanding if the initial starting point influences the convergence of the chain (see discussion on trace plots below for more understanding). We present sample code below of how this could be implemented using dummy data.
+
+```{r sample_stan_code, eval=FALSE, include=TRUE}
+rstan::stan(
+  # Empirical data
+  data = list(
+    N = 8, # Number of observations 
+    obs = c(6, 1, 2, 3, 0, 4, 1, 3) # Sampled data from Poisson distribution   
+  ),
+  # Simulation settings
+  chains = 3, # Number of segments to split simulation into
+  iter = 10000, # Number of iterations per chain
+  warmup = 1000, # Number of iterations to "toss out"
+  seed = 314159, # for reproducibility
+  model_code = '
+      // Empirical data, corresponds to first argument in function call
+      data{
+        // Number of observations      
+        int<lower = 0> N; 
+        
+        // The empirical data
+        int obs[N]; 
+      }
+      
+      // Simulated parameters - i.e., where you set up prior distribution
+      parameters {
+        // Poisson parameter of our likelihood distribution
+        real<lower = 0> sampled_lambda;
+      }
+      
+      // Main model
+      model {
+        // Assumed prior distribution of lambda: ChiSquare(nu = 2)
+        sampled_lambda ~ chi_square(2); 
+        
+        // For each data point, we simulate a poisson likelihood
+        for(i in 1:N) {
+          obs[i] ~ poisson(sampled_lambda);
+        }
+      }
+  '
+)
+```
 
 ::: {custom-style="Highlight"}
 I like Alex's idea of having tying this back to anchoring
@@ -398,10 +438,6 @@ bayesian <- mean(bayesian_sample)
 
 After running 10,000 simulations with your selected distribution, you're left with a central estimate of `r round(bayesian, 2)`. Since you took an objective view (i.e., "wide", "uninformative", "weak", "vague") of your prior distribution, your result will be closer to the historical average (`r round(mean(counts$count), 2)`) than the point estimate (`r round(point_estimate, 2)`).
 
-::: {custom-style="Highlight"}
-let's add chart showing wide vs narrow prior?
-:::
-
 If instead you had strong reason to believe that there would be `r round(point_estimate, 2)` earthquakes, you may opt for a "stronger" prior by letting $\lambda$ have a much tighter distribution around the mean.
 
 Let's compare each result to the true number of earthquakes that occurred in 2012 (`r true_count`).
@@ -540,6 +576,8 @@ Meyers, G. 2019. “A Cost-of-Capital Risk Margin Formula for Nonlife Insurance 
 Sahasrabuddhe, R. 2021. "The Single Parameter Pareto Revisited." Casualty Actuarial Society E-Forum, Spring 2021.
 
 Schmid, F. 2013. "Bayesian Trend Selection." Casualty Actuarial Society E-Forum, Spring 2013.
+
+Venter, Gary, and Rajesh Sahasrabuddhe. 2015. “A Note on Parameter Risk.” Variance 9 (1).
 
 Verrall, R. J. 2007. "Obtaining Predictive Distributions for Reserves Which Incorporate Expert Opinion." Variance 1 (1).
 
