@@ -13,12 +13,12 @@ abstract: 'This paper seeks to provide a practical guide for actuaries to levera
 
 # 1. Introduction
 
-Much has been written in the actuarial literature about Bayesian statistical methods over the last couple decades, few of which are still part of current exam syllabi. While these papers provide a thorough explanation of the process, the math can seem overly complex even to an experienced actuary. The purpose of this paper is twofold. First, we want to provide actuaries with a *basic* understanding of what goes on behind the scenes of a Bayesian model without getting bogged down in the underlying calculations. Second, we want to champion the continued inclusion of these topics on exam syllabi in the future.
+Much has been written in the actuarial literature about Bayesian statistical methods over the last couple decades, few of which are still part of current exam syllabi. While these papers provide a thorough explanation of the process, the math can seem overly complex even to an experienced actuary. The purpose of this paper is twofold. First, we want to provide property & casualty actuaries with a *basic* understanding of what goes on behind the scenes of a Bayesian model without getting bogged down in the underlying calculations. Second, we want to champion the continued inclusion of these topics on exam syllabi in the future.
 
 While we believe this paper is beneficial to everyone in the profession, we view the following as the target audience:
 
 -   An actuary who finished exams a few years ago and wants to ease their way into Bayesian methods.
--   An actuary who occasionally finds their estimates to be out of line with results, with no discernible reason.
+-   An actuary who occasionally finds their estimates to be out of line with expectations, with no discernible reason.
 -   An actuary who is interested in learning about Bayesian methods but finds the math too onerous or intimidating.
 -   An actuary with limited data.
 
@@ -56,7 +56,7 @@ For example, subjects were given the following problem:
 
 The majority of subjects said the numbers of days would be about the same, while the minority of subjects were split evenly between the larger and smaller hospitals. According to sampling theory, there will be more such days in the smaller hospital since smaller populations generally experience more volatility.
 
-For a more salient example, consider the actuary's task of estimating the prospective loss ratio for a given book of business when they only have two years of data. If the industry loss ratios and the company's loss ratios for that exposure are both consistently in the 75-80% range, one might expect the prospective loss ratio for your book and the industry to be similar. However, the volatility in loss ratios will be greater for your book than for the industry.
+For a more salient example, consider the actuary's task of estimating the prospective loss ratio for a given book of business when they only have two years of data. If the industry loss ratios and the company's historical loss ratios for that exposure are both consistently in the 75-80% range, one might expect the prospective loss ratio for your book and the industry to be similar. However, the volatility in loss ratios will be greater for your book than for the industry.
 
 ## 2.2 Insensitivity to the Prior Probability of Outcomes
 
@@ -88,7 +88,7 @@ Consider the following example. You are tasked with estimating the average ultim
 
 ## 2.5 Regression to the Mean
 
-This is the concept that if we observe a higher-than-average value sampled from a known distribution, that one should expect the next sample to be closer to average. However, studies show that many subjects do not always recognize this phenomenon. They can either fail to believe regression is applicable in their specific scenario or they might "invent spurious causal explanations."
+If we observe a higher-than-average value sampled from a known distribution, then one might expect the next sample to be closer to average. However, studies show that many subjects do not always recognize this phenomenon. They can either fail to believe regression is applicable in their specific scenario or they might "invent spurious causal explanations."
 
 In the case of forecasting losses, one might experience this phenomenom. Suppose losses are generally stable year-over-year, but the most recent year unexplicably dropped 20% relative to the prior year. How much weight should we give this possible outlier? Do we give the most weight to the average? While there is no right answer, being aware of this potential bias will allow you to make a more well-informed decision.
 
@@ -114,7 +114,7 @@ As we each have likely missed the mark on a projection at some point in our care
 
 ## 3.2 Statistical Schools of Thought
 
-Two common schools of statistical thinking are 1) Frequentist and 2) Bayesian.
+Two common schools of statistical thinking are Frequentist and Bayesian.
 
 Frequentist statistics is a type of inference that defines probability based on (as the name implies) an events frequency from a repeatable experiment.
 
@@ -122,15 +122,17 @@ Bayesian statistics may sound familiar to you, as the core of Bayesian statistic
 
 Most people, and specifically actuaries, rely on frequentist statistics for their analyses. Some of the main distinctions between the two types of inference are:
 
-|                      | Frequentist                                                                       | Bayesian                                                                          |
-|------------------|---------------------------|---------------------------|
-| Observed Data        | Repeatable and random events                                                      | Known and fixed sample                                                            |
-| Parameters           | Fixed values                                                                      | Unknown                                                                           |
-| View on Probability  | Objective                                                                         | Subjective                                                                        |
-| Computational Burden | Minimal                                                                           | Significant                                                                       |
-| End Result           | Probability of observing events based on a distribution given a set of parameters | Describe parameters probabilistically based on observations and prior assumptions |
+|                      | Frequentist                                                                                             | Bayesian                                                                                     |
+|-----------------|-----------------------------|--------------------------|
+| Observed Data        | Repeatable and random events                                                                            | Known and fixed sample                                                                       |
+| Parameters           | Fixed values                                                                                            | Unknown                                                                                      |
+| View on Probability  | Objective                                                                                               | Subjective                                                                                   |
+| Computational Burden | Minimal                                                                                                 | Significant                                                                                  |
+| End Result           | The probability of observing a set of events is based on a distribution and a set of defined parameters | Describes the parameter spaces probabilistically based on observations and prior assumptions |
 
-Upon reviewing these fundamentals, we would argue that actuarial math (as with most predictive statistics) is inherently Bayesian at its core. As actuaries, we typically know historical claim information and can say that claims and events are a known and fixed sample of observations. When predicting future claims or development on claims, we don’t know the underlying parameters, however, given the historical information and our expertise we can describe some basis of prior assumption about the parameters. Finally, as we want to capture as much risk in our modelling as possible, a frequentist approach typically lacks parameter risk if parameters are fixed.
+Upon reviewing these fundamentals, we would argue that actuarial math (as with most predictive statistics) is inherently Bayesian at its core. As actuaries, we typically know historical claim information and can say that claims and events are a known and fixed sample of observations. It is important to note that a lack of historical claims (zero observations) can also be relevant information when modeling.
+
+When predicting future claims or development on claims, we don’t know for certain the parameters of the future. However, given the historical information and our expertise we can describe some basis of prior assumption about the parameters. Finally, as we want to capture as much risk in our modelling as possible, a frequentist approach typically lacks parameter risk if parameters are fixed.
 
 As such, Bayesian statistics can greatly improve actuarial models by incorporating parameter risk without really changing our view on known information. Bayesian methods allow for the incorporation of prior knowledge (or what we like to call actuarial judgement) into our prior assumptions to influence our models. Lastly, technological advances have made Bayesian modeling more accessible by minimizing the computationally intensive hurdles.
 
@@ -138,7 +140,7 @@ As such, Bayesian statistics can greatly improve actuarial models by incorporati
 
 ## 4.1 Basics of Bayesian Statistics
 
-As mentioned previously, the foundation of Bayesian statistics is Bayes' theorem. To give a brief refresher on what Bayes' theorem is and how it works: Bayes' theorem describes how to adjust a prior assumption to get a new updated assumption (posterior) accounting for new information provided (historical evidence). It is represented by the formula below. Starting with the traditional definition where X and Y are some event and transforming it into our context where $\theta$ represents the parameter space we intend to estimate.
+As mentioned previously, the foundation of Bayesian statistics is Bayes' theorem. To give a brief refresher on what Bayes' theorem is: Bayes' theorem describes how to calculate an updated assumption (prior) beginning with a prior assumption and accounting for new information provided (historical evidence). It is represented by the formula below. Starting with the traditional definition where X and Y are some events and transforming it into our context where we have some observed data and $\theta$, which represents the parameter space we intend to estimate.
 
 $P(Y|X) = \frac{P(X|Y)}{P(X)} = \frac{f(X|Y)(f(Y)}{\int_{-\infty}^{\infty} f(X|Y)(f(Y)dy} = \frac{f(data|\theta)*f(\theta)}{\int f(data|\theta)*f(\theta)d\theta} = P(\theta|data)$
 
@@ -161,21 +163,21 @@ Can we revise this chart to have a wide and narrow prior? We need to have a smal
 
 MCMC methods are an effective way of using Bayesian statistics in actuarial models. By effective, we mean that these methods can replace the need to deal with the complex integral in the denominator of Bayes' theorem. Lets start by breaking down the term Markov Chain Monte Carlo:
 
--   A **Markov process** is a random process for which the future outcomes depend only on the present state.
+-   A **Markov chain** is a random process for which the future outcomes depend only on the present state.
 
 -   **Monte Carlo** methods use random sampling to approximate an outcome.
 
--   Putting **Markov process** and **Monte Carlo** methods together, MCMC is a way to gather a representation of the posterior distribution via simulation and repeated sampling.
+-   Putting **Markov chain** and **Monte Carlo** methods together, MCMC is a way to gather a representation of the posterior distribution via simulation and repeated sampling.
 
 It is easy to think about these two items separately, but what might an example of this look like in action?
 
 ::: {custom-style="Highlight"}
-This section needs to cite the source of the example. There are also a few outstanding comments from Raj.
+There are also a few outstanding comments from Raj.
 :::
 
-Imagine there is a single frog on a pond covered in lily pads. The frog can jump from one lily pad to any of the other lily pads in the pond. The frog is more likely to jump to lily pads that are closer to it, but it can certainly hop all the way across the pond to another lily pad. The frog wants to find a good lily pad to sit on and get sunlight.
+Imagine there is a single frog on a pond covered in lily pads. The frog can jump from one lily pad to any of the other lily pads in the pond. The frog is more likely to jump to lily pads that are closer to it, but it can certainly hop all the way across the pond to another lily pad.
 
-Which lily pad the frog jumps to from its current lily pad is random, but there is a higher probability that the frog jumps to a lily pad that is closer to it than one that is farther away. Essentially, the next lily pad that the frog jumps to has a distribution around it that is dependent only on the lily pad that the frog is currently on (i.e., this is a Markov process).
+Which lily pad the frog jumps to from its current lily pad is random, but there is a higher probability that the frog jumps to a lily pad that is closer to it than one that is farther away. Essentially, the next lily pad that the frog jumps to has a distribution around it that is dependent only on the lily pad that the frog is currently on (i.e., this is a Markov chain).
 
 Now, when the frog jumps to a new lily pad, the decision to stay on that lily pad is dependent on how much the frog likes that lily pad. The frog likes a lily pads based on how much sunlight it gets there (i.e., this is a likelihood function). If the frog doesn’t like how much sunlight it gets at the new lily pad, imagine that the frog forgets that it ever jumped to it and goes back to their previous lily pad before jumping again.
 
@@ -183,7 +185,7 @@ It’s an indecisive frog so it doesn’t want to stay on the same lily pad, and
 
 Hopefully, this is starting to paint a picture of what an MCMC process looks like and how the Markov chain and Monte Carlo simulation pieces fit together.
 
-Extrapolating this example out to statistical terms, if we think about the lily pads as being different parameter spaces, the frog jumps around from parameter space to parameter space trying to find one that fits the frog’s needs well. We can think about the frog liking a certain lily pad as how well the parameter space (e.g., the given lily pad) describes the observed data (e.g., the amount of sunlight). This is just a likelihood function (i.e., what is the likelihood of the data given the parameter space). In an MCMC simulation, if that likelihood is above or below some random simulated threshold, we will accept or reject the parameter space (e.g., will the frog stay at that lily pad or go back to the one it jumped there from). Finally, if we observe which lily pads the frog spends the most time on, we can end up with a distribution of which lily pads the frog liked best. In statistical terms, this equates to which parameter spaces that are most likely to describe the data.
+Extrapolating this example out to statistical terms, if we think about the lily pads as being different parameter sets, the frog jumps around from parameter set to parameter set trying to find one that fits the frog’s needs well. We can think about the frog liking a certain lily pad as how well the parameter set (e.g., the given lily pad) describes the observed data (e.g., the amount of sunlight). This is just a likelihood function (i.e., what is the likelihood of the data given the parameter set). In an MCMC simulation, if that likelihood is above or below some random simulated threshold, we will accept or reject the parameter set (e.g., will the frog stay at that lily pad or go back to the one it jumped there from). Finally, if the frog continues to jump around repeatedly, we observe which lily pads the frog spends the most time on, we can end up with a distribution of which lily pads the frog liked best. In statistical terms, this equates to which parameter sets that are most likely to describe the data.
 
 This example is a version of the Metropolis-Hastings algorithm, which is a form of an MCMC process. There are several forms of MCMC processes: Gibbs sampling, Metropolis-Hastings, Hamiltonian Monte Carlo, etc. The specifics of how each one works are beyond the scope of this paper.
 
@@ -191,49 +193,7 @@ This example is a version of the Metropolis-Hastings algorithm, which is a form 
 
 MCMC can be executed using Stan, an open-source software, via common coding languages (e.g., Python and R). Later in this paper we dive into a comparison of MCMC fits verses traditional methods and provide a real example of fitting an MCMC process. In this paper, we leverage the RStan package, though there are numerous other packages that can be used (RStan leverages Hamiltonian Monte Carlo).
 
-In order to assess the model fit of a MCMC model, there are several diagnostics you can analyze. There are many parameters that help in the simulation process of MCMC (e.g., thinning), most of which are beyond the scope of this paper. However, two related parameters that are important to assessing model fit are iterations and chains. Iterations are simply the number of times you want the Monte Carlo process to repeat itself. Chains however, break up the iterations into segments. For example if we wanted to have 30,000 iterations, we could break this up into 3 chains of equal length of 10,000 iterations each. When a new chain is started, the Markov process starts from a new spot. In this example, we would have 3 random starting locations before beginning the 10,000 iterations each. This helps in understanding if the initial starting point influences the convergence of the chain (see discussion on trace plots below for more understanding). We present sample code below of how this could be implemented using dummy data.
-
-```{r sample_stan_code, eval=FALSE, include=TRUE}
-rstan::stan(
-  # Empirical data
-  data = list(
-    N = 8, # Number of observations 
-    obs = c(6, 1, 2, 3, 0, 4, 1, 3) # Sampled data from Poisson distribution   
-  ),
-  # Simulation settings
-  chains = 3, # Number of segments to split simulation into
-  iter = 10000, # Number of iterations per chain
-  warmup = 1000, # Number of iterations to "toss out"
-  seed = 314159, # for reproducibility
-  model_code = '
-      // Empirical data, corresponds to first argument in function call
-      data{
-        // Number of observations      
-        int<lower = 0> N; 
-        
-        // The empirical data
-        int obs[N]; 
-      }
-      
-      // Simulated parameters - i.e., where you set up prior distribution
-      parameters {
-        // Poisson parameter of our likelihood distribution
-        real<lower = 0> sampled_lambda;
-      }
-      
-      // Main model
-      model {
-        // Assumed prior distribution of lambda: ChiSquare(nu = 2)
-        sampled_lambda ~ chi_square(2); 
-        
-        // For each data point, we simulate a poisson likelihood
-        for(i in 1:N) {
-          obs[i] ~ poisson(sampled_lambda);
-        }
-      }
-  '
-)
-```
+In order to assess the model fit of a MCMC model, there are several diagnostics you can analyze. There are many parameters that help in the simulation process of MCMC (e.g., thinning), most of which are beyond the scope of this paper. However, two related parameters that are important to assessing model fit are iterations and chains. Iterations are simply the number of times you want the Monte Carlo process to repeat itself. Chains however, break up the iterations into segments. For example if we wanted to have 30,000 iterations, we could break this up into 3 chains of equal length of 10,000 iterations each. When a new chain is started, the Markov process starts from a new spot. In this example, we would have 3 random starting locations before beginning the 10,000 iterations each. This helps in understanding if the initial starting point influences the convergence of the chain (see discussion on trace plots below for more understanding).
 
 ::: {custom-style="Highlight"}
 I like Alex's idea of having tying this back to anchoring
@@ -249,21 +209,13 @@ Some model diagnostics to help assess the model fit:
 
 -   Effective Sample Size (N-eff) tests the correlation of the sampling done in the simulation. Since it is a Markov chain and the next iteration is dependent on the current starting position, there is going to be correlation between samples. The effective sample size statistic helps identify how much correlation occurs during the sampling through the following formula:
 
-    $ESS = \frac{n}{1 + 2*\sum_{k=1}^{\infty} \rho (k)}$
+    $ESS = \frac{n}{1 + 2*\sum_{k=1}^{\infty} \rho (k)}$, where $n$ is the number of iterations and $\rho (k)$ is the correlation at lag $k$.
 
-    where n is the number of iterations and $\rho (k)$ is the correlation at lag k. We want a higher effective sample size relative to the number of total iterations in the simulation. For example, if we ran a model with 10,000 iterations, an effective sample size of 7,000 could be considered a positive sign that there is low correlation in the model, and an effective sample size of 200 would indicate that there is high correlation in the model.
-
-    ::: {custom-style="Highlight"}
-    Outstanding comments from Grant on n_eff
-    :::
+    To think of it another way, the effective sample size is an estimation of how many ***independent*** iterations are in the simulated results, and so we want a higher effective sample size relative to the number of total iterations in the simulation. For example, if we ran a model with 10,000 iterations, an effective sample size of 7,000 could be considered a positive sign that there is low correlation in the model, and an effective sample size of 200 would indicate that there is high correlation in the model.
 
 -   Trace plots show the results of the MCMC model in sequential order of the simulation. Since the output of our model is parameter estimates, we would create a trace plot for each parameter with the iteration number as the x-axis and the corresponding simulated parameter value as the y-value and draw a connecting line so we can see the path of the simulation. Ideally, we would want a trace plot to appear random, like white noise, as a sign of well-mixing models and well-converged chains. Below comparing the left and right plot, the left plot is an example of well-mixed trace plot result, the points appear random, with no specific pattern in the lines, and all 3 chains are converging over the same region. The plot on the right is a not well-mixed model, as we see the orange line has a much higher mean across all iterations than the pink or blue lines.
 
     ![](images/clipboard-1793822460.png){width="250"}![](images/clipboard-2720184601.png){width="250"}
-
-    ::: {custom-style="Highlight"}
-    Outstanding comments from Grant on converging
-    :::
 
 # 5. An Example in Action
 
@@ -507,7 +459,7 @@ Additionally, there are essentially no "extreme" values (225+) being simulated.
 With the benefit of hindsight, let's see why we overestimated the true counts in all four methods. As it turns out, we fell prey to (at least) two key biases:
 
 -   Misconception of chance: Humans just aren't that great at identifying random processes. For example, a series of coin tosses with all heads is seen as "less random" than a series with alternating heads and tails, even though both results are equally likely.
--   Regression to the mean: As seen in the chart below, the high average for 2007-2011 was followed by a low average in 2012-2023. This resulted in the new all-year average (1983-2023) being nearly identical to the all-year average before the rise (1983-2006).
+-   Regression to the mean: As seen below, the high average for 2007-2011 was followed by a low average in 2012-2023. This resulted in the new all-year average (1983-2023) being nearly identical to the all-year average before the rise (1983-2006).
 
 ```{r plot_full, echo=FALSE, fig.width=6, fig.height=4}
 gg_orig +
@@ -555,9 +507,9 @@ We would like to extend our gratitude to our colleagues for their thoughtful rev
 
 ## 6.3 Biographies of the Authors
 
-Spencer is a Senior Manager with Oliver Wyman Actuarial Consulting, Inc., located in Philadelphia. He holds a Bachelor of Science from Lebanon Valley College. Spencer is a Fellow of the Casualty Actuarial Society and a Member of the American Academy of Actuaries.
+Spencer is a Senior Actuary with Spring Consulting Group. He holds a Bachelor of Science from Lebanon Valley College. Spencer is a Fellow of the Casualty Actuarial Society and a Member of the American Academy of Actuaries.
 
-Kenneth is a Senior Manager with Oliver Wyman Actuarial Consulting, Inc., located in Chicago. He holds a Bachelor of Science degree in Actuarial Mathematics and Statistics from the University of Pittsburgh. Kenny is a Fellow of the Casualty Actuarial Society and a Member of the American Academy of Actuaries.
+Kenneth is a Senior Manager with Oliver Wyman Actuarial Consulting, Inc. He holds a Bachelor of Science degree in Actuarial Mathematics and Statistics from the University of Pittsburgh. Kenny is a Fellow of the Casualty Actuarial Society and a Member of the American Academy of Actuaries.
 
 ## 6.4 Citations
 
