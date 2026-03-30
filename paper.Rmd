@@ -32,7 +32,7 @@ In Section 5, we use a real-life example to show how the underlying biases in Se
 
 In Section 6, we provide the reader with additional resources to further explore these topics.
 
-This paper was written using R Markdown. The underlying code is available as a supplementary file. Where beneficial, we show the code in the body of the paper. Sample code for setting up a possible model is included at the end of the paper.
+This paper was written using R Markdown. The underlying code is available as a supplementary file. Sample code for setting up a possible model is included as a supplementary file.
 
 # 2. A Lesson in Behavioral Economics
 
@@ -90,7 +90,7 @@ Consider the following example. You are tasked with estimating the average ultim
 
 If we observe a higher-than-average value sampled from a known distribution, then one might expect the next sample to be closer to average. However, studies show that many subjects do not always recognize this phenomenon. They can either fail to believe regression is applicable in their specific scenario or they might "invent spurious causal explanations."
 
-In the case of forecasting losses, one might experience this phenomenom. Suppose losses are generally stable year-over-year, but the most recent year unexplicably dropped 20% relative to the prior year. How much weight should we give this possible outlier? Do we give the most weight to the average? While there is no right answer, being aware of this potential bias will allow you to make a more well-informed decision.
+In the case of forecasting losses, one might experience this phenomenon. Suppose losses are generally stable year-over-year, but the most recent year inexplicably dropped 20% relative to the prior year. How much weight should we give this possible outlier? Do we give the most weight to the average? While there is no right answer, being aware of this potential bias will allow you to make a more well-informed decision.
 
 ## 2.6 Anchoring
 
@@ -123,7 +123,7 @@ Bayesian statistics may sound familiar to you, as the core of Bayesian statistic
 Most people, and specifically actuaries, rely on frequentist statistics for their analyses. Some of the main distinctions between the two types of inference are:
 
 |                      | Frequentist                                                                                             | Bayesian                                                                                     |
-|-----------------|-----------------------------|--------------------------|
+|------------------|----------------------------|--------------------------|
 | Observed Data        | Repeatable and random events                                                                            | Known and fixed sample                                                                       |
 | Parameters           | Fixed values                                                                                            | Unknown                                                                                      |
 | View on Probability  | Objective                                                                                               | Subjective                                                                                   |
@@ -191,9 +191,9 @@ This example is a version of the Metropolis-Hastings algorithm, which is a form 
 
 ## 4.3 Execution of MCMC
 
-MCMC can be executed using Stan, an open-source software, via common coding languages (e.g., Python and R). Later in this paper we dive into a comparison of MCMC fits verses traditional methods and provide a real example of fitting an MCMC process. In this paper, we leverage the RStan package, though there are numerous other packages that can be used (RStan leverages Hamiltonian Monte Carlo).
+MCMC can be executed using Stan, an open-source software, via common coding languages (e.g., Python and R). Later in this paper we dive into a comparison of MCMC fits versus traditional methods and provide a real example of fitting an MCMC process. In this paper, we leverage the RStan package, though there are numerous other packages that can be used (RStan leverages Hamiltonian Monte Carlo).
 
-In order to assess the model fit of a MCMC model, there are several diagnostics you can analyze. There are many parameters that help in the simulation process of MCMC (e.g., thinning), most of which are beyond the scope of this paper. However, two related parameters that are important to assessing model fit are iterations and chains. Iterations are simply the number of times you want the Monte Carlo process to repeat itself. Chains however, break up the iterations into segments. For example if we wanted to have 30,000 iterations, we could break this up into 3 chains of equal length of 10,000 iterations each. When a new chain is started, the Markov process starts from a new spot. In this example, we would have 3 random starting locations before beginning the 10,000 iterations each. This helps in understanding if the initial starting point influences the convergence of the chain (see discussion on trace plots below for more understanding).
+In order to assess the model fit of a MCMC model, there are several diagnostics you can analyze. There are many parameters that help in the simulation process of MCMC (e.g., thinning), most of which are beyond the scope of this paper. However, two related parameters that are important to assessing model fit are iterations and chains. Iterations are simply the number of times you want the Monte Carlo process to repeat itself. Chains however, break up the iterations into segments. For example, if we wanted to have 30,000 iterations, we could break this up into 3 chains of equal length of 10,000 iterations each. When a new chain is started, the Markov process starts from a new spot. In this example, we would have 3 random starting locations before beginning the 10,000 iterations each. This helps in understanding if the initial starting point influences the convergence of the chain (see discussion on trace plots below for more understanding).
 
 ::: {custom-style="Highlight"}
 I like Alex's idea of having tying this back to anchoring
@@ -542,184 +542,3 @@ Dutang, Christophe, and Arthur Charpentier. 2025. “CASdatasets: Insurance Data
 Stan Development Team. 2025. “{RStan}: The {r} Interface to {Stan}.” <https://mc-stan.org/>.
 
 Wickham, Hadley. 2016. “Ggplot2: Elegant Graphics for Data Analysis.” <https://ggplot2.tidyverse.org>.
-
-## 6.6 Example Code
-
-In this section, we provide a sample template for using the `rstan` package in R. The specific case demonstrated will be the estimation of accident year 2024 indemnity claim frequency (per 1,000 employees) in the state of California. We'll use the last 20 years from the WCIRB's 2025 State of the System Report.
-
-```{r example_code, eval=FALSE, include=TRUE}
-# raw data
-
-historical_frequencies <- data.table::data.table(
-  year = c(2005, 2007, 2009, 2011, 2013, 2015, 2017, 2019, 2021, 2022, 2023),
-  rate = c(16.411, 15.005, 14.127, 15.052, 15.572, 15.311, 14.408, 14.279, 15.521, 15.147, 16.055)
-)
-
-# bring the rate to 2024 levels - indicated trend is minimal, assume 0%
-
-stats::lm(data = historical_frequencies, formula = log(rate) ~ year)
-
-historical_frequencies[, freq_trend := 1.00 ^ (2024 - year)]
-
-historical_frequencies[, onlevel_rate := rate * freq_trend]
-
-# best fit = Gamma
-
-library(EnvStats)
-
-EnvStats::distChoose(
-  y = historical_frequencies$onlevel_rate,
-  choices = c('gamma', 'lnorm', 'norm', 'weibull')
-)
-
-ggplot2::ggplot(mapping = ggplot2::aes(sample = historical_frequencies$onlevel_rate)) +
-  ggplot2::theme_minimal() +
-  # limit plot range
-  ggplot2::coord_cartesian(
-    xlim = c(13.5, 16.5),
-    ylim = c(13.5, 16.5)
-  ) +
-  # define legend
-  ggplot2::scale_color_manual(
-    name = 'Distribution',
-    values = c(
-      'lognormal' = 'red',
-      'normal' = 'green',
-      'gamma' = 'blue',
-      'weibull' = 'purple'
-    )
-  ) +
-  # plot the "ideal" line
-  ggplot2::geom_abline(slope = 1, intercept = 0, linewidth = 1, alpha = 0.1) +
-  # Lognormal qq line
-  ggplot2::stat_qq(
-    mapping = ggplot2::aes(color = 'lognormal'),
-    distribution = stats::qlnorm,
-    dparams = MASS::fitdistr(
-      x = historical_frequencies$onlevel_rate,
-      densfun = 'lognormal'
-    )$estimate,
-    geom = 'line'
-  ) +
-  # Normal qq line
-  ggplot2::stat_qq(
-    mapping = ggplot2::aes(color = 'normal'),
-    distribution = stats::qnorm,
-    dparams = MASS::fitdistr(
-      x = historical_frequencies$onlevel_rate,
-      densfun = 'normal'
-    )$estimate,
-    geom = 'line'
-  ) +
-  # Weibull qq line
-  ggplot2::stat_qq(
-    mapping = ggplot2::aes(color = 'weibull'),
-    distribution = stats::qweibull,
-    dparams = MASS::fitdistr(
-      x = historical_frequencies$onlevel_rate,
-      densfun = 'weibull'
-    )$estimate,
-    geom = 'line'
-  ) +
-  # Gamma qq line
-  ggplot2::stat_qq(
-    mapping = ggplot2::aes(color = 'gamma'),
-    distribution = stats::qgamma,
-    dparams = MASS::fitdistr(
-      x = historical_frequencies$onlevel_rate,
-      densfun = 'gamma'
-    )$estimate,
-    geom = 'line'
-  )
-
-# now that we have our selected distribution, set up our stan model
-# refer here for help getting rstan installed: https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started
-
-# define the model code
-
-stan_model <- rstan::stan_model(
-  model_code = '
-    data{
-      // this is the number of observations
-      int<lower = 0> N;
-
-      // this is the raw data (i.e., the on-level frequency rates)
-      real<lower = 0> obs[N];
-
-      // these are for the prior disributions for the alpha parameter
-      real alpha_param_1;
-      real<lower = 0> alpha_param_2;
-
-      // these are for the prior disributions for the beta parameter
-      real<lower = 0> beta_param;
-    }
-
-    parameters {
-      // define the alpha parameter of the Gamma likelihood
-      real<lower = 0> alpha;
-
-      // define the beta parameter of the Gamma likelihood
-      real<lower = 0> beta;
-    }
-
-    model {
-      // assume that our alpha parameter follows a Lognormal distribution
-      alpha ~ lognormal(alpha_param_1, alpha_param_2);
-
-      // assume that our beta parameter follows a Exponential distribution
-      beta ~ exponential(beta_param);
-
-      // for each observation, we assumed it follows a Gamma distribution
-      for(i in 1:N) {
-        obs[i] ~ gamma(alpha, beta);
-      }
-    }
-  '
-)
-
-# fit your model
-
-stan_fit <- rstan::sampling(
-  object = stan_model,
-  # set up environment
-  chains = 3,
-  iter = 10000,
-  warmup = 2500,
-  thin = 1,
-  seed = 314159,
-  # supply inputs
-  data = list(
-    N = historical_frequencies[, .N],
-    obs = historical_frequencies$onlevel_rate,
-    # per fit using MASS, the MLE of the shape parameter = 448.51500
-    # back into value using method of moments and a wide prior (CV = 10%)
-    alpha_param_1 = log(448.515) - 0.5 * log(1 + 0.1^2),
-    alpha_param_2 = sqrt(log(1 + 0.1^2)),
-    # per fit using MASS, the MLE of the rate parameter = 29.56273
-    beta_param = 1 / 29.56273
-  )
-)
-
-# examine diagnostics
-
-rstan::summary(stan_fit) # resulting means are alpha = 444.37632 and beta = 29.28736 (close to our priors)
-rstan::check_hmc_diagnostics(stan_fit) # all passed
-rstan::stan_hist(stan_fit)
-rstan::stan_par(stan_fit, par = 'alpha')
-rstan::stan_par(stan_fit, par = 'beta')
-rstan::stan_scat(stan_fit, pars = c('alpha', 'beta'))
-rstan::stan_trace(stan_fit, pars = c('alpha', 'beta'), nrow = 2)
-
-# simulate 2024 frequency rates
-
-set.seed(314159)
-simulated_rates <- purrr::map2_dbl(
-  .x = rstan::extract(stan_fit, par = 'alpha')[[1]],
-  .y = rstan::extract(stan_fit, par = 'beta')[[1]],
-  .f = function(alpha, beta) {
-    stats::rgamma(n = 1, shape = alpha, rate = beta)
-  }
-)
-
-summary(simulated_rates) # per WCIRB, the actual 2024 rate is 16.4
-```
