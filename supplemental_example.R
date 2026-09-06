@@ -97,7 +97,7 @@ stan_model <- rstan::stan_model(
       int<lower = 0> N;
 
       // this is the raw data (i.e., the on-level frequency rates)
-      real<lower = 0> obs[N];
+      array[N] real<lower = 0> obs;
 
       // these are for the prior disributions for the alpha parameter
       real alpha_param_1;
@@ -119,7 +119,7 @@ stan_model <- rstan::stan_model(
       // assume that our alpha parameter follows a Lognormal distribution
       alpha ~ lognormal(alpha_param_1, alpha_param_2);
 
-      // assume that our beta parameter follows a Exponential distribution
+      // assume that our beta parameter follows an Exponential distribution
       beta ~ exponential(beta_param);
 
       // for each observation, we assumed it follows a Gamma distribution
