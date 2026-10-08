@@ -16,11 +16,11 @@ Abstract
 This paper seeks to provide a practical guide for actuaries to leverage Bayesian methods, as well as a discussion on behavioral economics as a motivating force.
 :::
 
-**Keywords** --- Bayesian Statistics, Monte Carlo, Markov Chain, MCMC, Stan, Forecasting, Predictions, Behavioral Economics
+**Keywords** --- Bayesian Statistics, Monte Carlo, Markov Chain, MCMC, Stan, Forecasting, Predictions, Behavioral Economics, Bias
 
 # 1. Introduction
 
-Much has been written in the actuarial literature about Bayesian statistical methods over the last couple decades, few of which are still part of current exam syllabi. While these papers provide a thorough explanation of the process, the math can seem overly complex even to an experienced actuary. The purpose of this paper is twofold. First, we want to provide property & casualty actuaries with a *basic* understanding of what goes on behind the scenes of a Bayesian model without getting bogged down in the underlying calculations. Second, we want to champion the continued inclusion of these topics on exam syllabi in the future.
+Much has been written in the actuarial literature about Bayesian statistical methods over the last couple decades, few of which are still part of current CAS exam syllabi. While these papers provide a thorough explanation of the process, the math can seem overly complex even to an experienced actuary. The purpose of this paper is twofold. First, we want to provide property & casualty actuaries with a *basic* understanding of what goes on behind the scenes of a Bayesian model without getting bogged down in the underlying calculations. Second, we want to champion the continued inclusion of these topics on exam syllabi in the future.
 
 While we believe this paper is beneficial to everyone in the profession, we view the following as the target audience:
 
@@ -43,7 +43,7 @@ This paper was written using R Markdown. The underlying code is available as a s
 
 # 2. A Lesson in Behavioral Economics
 
-When making predictions, people often rely on mental operations ("heuristics"). While these may be useful from an evolutionary standpoint, they can lead to "... systematic and predictable errors". Below is a non-exhaustive list of possible factors at play when making actuarial predictions, along with key examples from "Judgment Under Uncertainty: Heuristics and Biases" by Tversky & Kahnemann.
+When making predictions, people often rely on mental operations ("heuristics"). While these may be useful from an evolutionary standpoint, they can lead to "... systematic and predictable errors". Below is a non-exhaustive list of possible factors at play when making actuarial predictions, along with key examples from *Judgment Under Uncertainty: Heuristics and Biases* (Tversky & Kahnemann).
 
 ## 2.1 Insensitivity to Sample Size
 
@@ -69,9 +69,11 @@ For a more salient example, consider the actuary's task of estimating the prospe
 
 When making a judgment of whether item X belongs to either class A or class B, people will assign it to the class in which the description of item X matches the stereotype of the class, despite the relative likelihood of each class.
 
-For example, when subjects were tasked with evaluating the likelihood of whether a randomly sampled person out of a pool of 30 engineers and 70 lawyers was a lawyer or an engineer, subjects correctly identified the relative likelihoods (30% & 70%). However, when the following description of the randomly sampled person was introduced, subjects "evaluated the likelihood that a particular description belonged to an engineer rather than to a lawyer ... with little or no regard for the prior probabilities of the two outcomes."
+For example, when subjects were tasked with evaluating the likelihood of whether a randomly sampled person out of a pool of 30 engineers and 70 lawyers was a lawyer or an engineer, subjects correctly identified the relative likelihoods (30% & 70%). However, this was not the case when subjects were also given a description of the randomly sampled person was introduced. Consider the following description:
 
 > Dick is a 30-year old man. He is married with no children. A man of high ability and high motivation, he promises to be quite successful in his field. He is well liked by his colleagues.
+
+When presented with this description, subjects "evaluated the likelihood that a particular description belonged to an engineer rather than to a lawyer ... with little or no regard for the prior probabilities of the two outcomes."
 
 When presented with the seemingly uninformative description, subjects now estimated the relative likelihoods to be equal (50% & 50%). That is, they ignored the distribution of professions from the population (30% & 70%). Even though the description offers no clue as to what profession Dick might belong to, subjects ignored the distribution of professions for the populations.
 
@@ -93,13 +95,13 @@ Consider the following example. You are tasked with estimating the average ultim
 
 ## 2.5 Regression to the Mean
 
-If we observe a higher-than-average value sampled from a known distribution, then one might expect the next sample to be closer to average. However, studies show that many subjects do not always recognize this phenomenon. They can either fail to believe regression is applicable in their specific scenario or they might "invent spurious causal explanations."
+If we observe a higher-than-average value sampled from a known distribution, then one might expect the next sample to be closer to average. However, studies show that many subjects do not always recognize this phenomenon. They can either fail to believe regression is applicable in their specific scenario, or they might "invent spurious causal explanations."
 
-In the case of forecasting losses, one might experience this phenomenon. Suppose losses are generally stable year-over-year, but the most recent year unexpectedly dropped 20% relative to the prior year. How much weight should we give this possible outlier? Do we give the most weight to the average? While there is no right answer, being aware of this potential bias will allow you to make a more well-informed decision.
+In the case of forecasting losses, one might experience this phenomenon. Suppose losses are generally stable year-over-year, but the most recent year unexpectedly dropped 20% relative to the prior year. How much weight should we give this possible outlier? Do we give more weight to the longer-term average? While there is no right answer, being aware of this potential bias will allow you to make a more well-informed decision.
 
 ## 2.6 Anchoring
 
-In one study, subjects were tasked with estimating the percentage of African countries in the United Nations. Before making their estimate, the subjects were asked to spin a wheel with numbers from 0 to 100. The subjects had to adjust upwards or downwards from this starting value. The median estimate for those with a starting value of 10 was 25%. When the starting value was 65, the median estimate increased to 45%. This example illustrates the concept of anchoring, which is where some initial value influences the estimated value.
+In one study, subjects were tasked with estimating the percentage of African countries in the United Nations. Before making their estimate, the subjects were asked to spin a wheel with numbers from 0 to 100. The subjects had to adjust upwards or downwards from this starting value. The median estimate for those with a starting value of 10 was 25%. However, for those with a starting value of 65, they had a significantly higher median estimate of 45%. This example illustrates the concept of anchoring, which is where some initial value influences the estimated value.
 
 Suppose you're in charge of providing a loss forecast for the upcoming accident year and have been doing so for a few years. When making your selection, you are acutely aware of the estimate you provided last year (i.e., the "initial value"). This prior estimate might be "anchoring" your estimate of the prospective year. While that may not be a bad thing, issues may arise when there is insufficient adjustment to the anchoring value.
 
@@ -117,13 +119,15 @@ As we each have likely missed the mark on a projection at some point in our care
 -   Model Misspecification: The risk that one did not select the right model.
 -   Insufficient Parameter Identification: Results when we fail to consider the uncertainty of our model elements.
 
+These risks are one reason why reserving actuaries often provide a range of reasonable estimates along with their point estimates. 
+
 ## 3.2 Statistical Schools of Thought
 
 Two common schools of statistical thinking are Frequentist and Bayesian.
 
 Frequentist statistics is a type of inference that defines probability based on (as the name implies) an events frequency from a repeatable experiment.
 
-Bayesian statistics may sound familiar to you, as the core of Bayesian statistics is an idea called Bayes' theorem, which most actuaries would have learned in an introductory statistics course.
+Bayesian statistics may sound familiar to you, as the core of Bayesian statistics is an idea called Bayes' theorem, which most actuaries would have learned in an introductory statistics course and is on the CAS Exam P/1 syllabus. We will explore Bayesian statistics further in Section 4.
 
 Most people, and specifically actuaries, rely on frequentist statistics for their analyses. Some of the main distinctions between the two types of inference are:
 
@@ -153,20 +157,20 @@ flextable::regulartable(
     )
   ),
   cwidth = c(1.75, 2.25, 2.25)
-)
+) |> flextable::border_inner()
 ```
 
 Upon reviewing these fundamentals, we would argue that actuarial math (as with most predictive statistics) is inherently Bayesian at its core. As actuaries, we typically know historical claim information and can say that claims and events are a known and fixed sample of observations. It is important to note that a lack of historical claims (zero observations) can also be relevant information when modeling.
 
 When predicting future claims or development on claims, we don't know for certain the parameters of the future. However, given the historical information and our expertise we can describe some basis of prior assumption about the parameters. Finally, as we want to capture as much risk in our modelling as possible, a frequentist approach typically lacks parameter risk if parameters are fixed.
 
-As such, Bayesian statistics can greatly improve actuarial models by incorporating parameter risk without really changing our view on known information. Bayesian methods allow for the incorporation of prior knowledge (or what we like to call actuarial judgement) into our prior assumptions to influence our models. Lastly, technological advances have made Bayesian modeling more accessible by minimizing the computationally intensive hurdles.
+As such, Bayesian statistics can greatly improve actuarial models by incorporating parameter risk without really changing our view on known information. Bayesian methods allow for the incorporation of prior knowledge (or what we like to call actuarial judgement) into our prior assumptions to influence our models. Lastly, technological advances have made Bayesian modeling more accessible by minimizing computationally intensive hurdles.
 
 # 4 Bayesian Statistical Modelling
 
 ## 4.1 Basics of Bayesian Statistics
 
-As mentioned previously, the foundation of Bayesian statistics is Bayes' theorem. To give a brief refresher on what Bayes' theorem is: Bayes' theorem describes how to calculate an updated assumption (prior) beginning with a prior assumption and accounting for new information provided (historical evidence). It is represented by the formula below. Starting with the traditional definition where X and Y are some events and transforming it into our context where we have some observed data and $\theta$, which represents the parameter space we intend to estimate.
+As mentioned previously, the foundation of Bayesian statistics is Bayes' theorem. To give a brief refresher on what Bayes' theorem is: Bayes' theorem describes how to calculate an updated assumption (posterior) beginning with a prior assumption and accounting for new information provided (historical evidence). It is represented by the formula below. Starting with the traditional definition where X and Y are some events and transforming it into our context where we have some observed data and $\theta$, which represents the parameter space we intend to estimate.
 
 $P(Y|X) = \frac{P(X|Y)}{P(X)} = \frac{f(X|Y)(f(Y)}{\int_{-\infty}^{\infty} f(X|Y)(f(Y)dy} = \frac{f(data|\theta)*f(\theta)}{\int f(data|\theta)*f(\theta)d\theta} = P(\theta|data)$
 
@@ -190,13 +194,13 @@ knitr::include_graphics(c(
 
 ## 4.2 Markov Chain Monte Carlo (MCMC)
 
-MCMC methods are an effective way of using Bayesian statistics in actuarial models. By effective, we mean that these methods can replace the need to deal with the complex integral in the denominator of Bayes' theorem. Lets start by breaking down the term Markov Chain Monte Carlo:
+MCMC methods are an effective way of using Bayesian statistics in actuarial models. By effective, we mean that these methods can replace the need to deal with the complex integral in the denominator of Bayes' theorem. Let's start by breaking down the term Markov Chain Monte Carlo:
 
 -   A **Markov chain** is a random process for which the future outcomes depend only on the present state.
 
 -   **Monte Carlo** methods use random sampling to approximate an outcome.
 
--   Putting **Markov chain** and **Monte Carlo** methods together, MCMC is a way to gather a representation of the posterior distribution via simulation and repeated sampling.
+-   Putting **Markov chain** and **Monte Carlo** methods together, **MCMC** is a way to gather a representation of the posterior distribution via simulation and repeated sampling.
 
 It is easy to think about these two items separately, but what might an example of this look like in action?
 
@@ -204,7 +208,7 @@ Imagine there is a single frog on a pond covered in lily pads. The frog can jump
 
 Which lily pad the frog jumps to from its current lily pad is random, but there is a higher probability that the frog jumps to a lily pad that is closer to it than one that is farther away. Essentially, the next lily pad that the frog jumps to has a distribution around it that is dependent only on the lily pad that the frog is currently on (i.e., this is a Markov chain).
 
-Now, when the frog jumps to a new lily pad, the decision to stay on that lily pad is dependent on how much the frog likes that lily pad. The frog likes a lily pads based on how much sunlight it gets there (i.e., this is a likelihood function). If the frog doesn't like how much sunlight it gets at the new lily pad, imagine that the frog forgets that it ever jumped to it and goes back to their previous lily pad before jumping again.
+Now, when the frog jumps to a new lily pad, the decision to stay on that lily pad is dependent on how much the frog likes that lily pad. The frog likes a lily pad based on how much sunlight it gets there (i.e., this is a likelihood function). If the frog doesn't like how much sunlight it gets at the new lily pad, imagine that the frog forgets that it ever jumped to it and goes back to their previous lily pad before jumping again.
 
 It's an indecisive frog so it doesn't want to stay on the same lily pad, and so the frog will keep jumping from lily pad to lily pad (i.e., this a Monte Carlo process). At the end of the day, the frog will have spent more time on lily pads that got the most sunlight, and less time at those in the shade that weren't the right fit for the frog.
 
@@ -218,7 +222,7 @@ This example is a version of the Metropolis-Hastings algorithm, which is a form 
 
 MCMC can be executed using Stan, an open-source software, via common coding languages (e.g., Python and R). Later in this paper we dive into a comparison of MCMC fits versus traditional methods and provide a real example of fitting an MCMC process. In this paper, we leverage the RStan package, though there are numerous other packages that can be used (RStan leverages Hamiltonian Monte Carlo).
 
-There are many parameters that help in the simulation process of MCMC (e.g., thinning), most of which are beyond the scope of this paper. However, two related parameters that are important to fitting a model are iterations and chains. Iterations are simply the number of times you want the Monte Carlo process to repeat itself. Chains however, break up the iterations into segments. When a new chain is started, the Markov process starts from a new spot. For example, if we wanted to have 30,000 iterations, we could break the simulation up into 3 chains of 10,000 iterations each. In this example, we would have 3 random starting locations before each 10,000-iteration chain. This helps in understanding if the initial starting point influences the convergence of the chain (see discussion on anchoring above and trace plots below for more understanding).
+There are many parameters that help in the simulation process of MCMC (e.g., thinning), most of which are beyond the scope of this paper. However, two related parameters that are very important to fitting a model are iterations and chains. Iterations are simply the number of times you want the Monte Carlo process to repeat itself. Chains break up the iterations into segments. When a new chain is started, the Markov process starts from a new spot. For example, if we wanted to have 30,000 iterations, we could break the simulation up into 3 chains of 10,000 iterations each. In this example, we would have 3 random starting locations before each 10,000-iteration chain. This helps in understanding if the initial starting point influences the convergence of the chain (see discussion on anchoring above and trace plots below for more understanding).
 
 Relating back to our frog in a pond example, breaking into chains, ensures that no matter where the frog were to start in the pond, the frog would always find its way to the sunniest parts of the pond.
 
@@ -230,7 +234,7 @@ In order to assess the fit of a MCMC model, there are several diagnostics you ca
 
     $ESS = \frac{n}{1 + 2*\sum_{k=1}^{\infty} \rho (k)}$, where $n$ is the number of iterations and $\rho (k)$ is the correlation at lag $k$.
 
-    To think of it another way, the effective sample size is an estimation of how many ***independent*** iterations are in the simulated results, and so we want a higher effective sample size relative to the number of total iterations in the simulation. For example, if we ran a model with 10,000 iterations, an effective sample size of 7,000 could be considered a positive sign that there is low correlation in the model, and an effective sample size of 200 would indicate that there is high correlation in the model.
+    To think of it another way, the effective sample size is an estimation of how many ***independent*** iterations are in the simulated results, and so we want a higher effective sample size relative to the number of total iterations in the simulation. For example, if we ran a model with 10,000 iterations, an effective sample size of 7,000 could be considered a positive sign that there is low correlation in the model, and an effective sample size of 200 would indicate that there is high correlation in the model and may not be a well fit model.
 
 -   Trace plots show the results of the MCMC model in sequential order of the simulation. Since the output of our model is parameter estimates, we would create a trace plot for each parameter with the iteration number as the x-axis and the corresponding simulated parameter value as the y-value and draw a connecting line so we can see the path of the simulation. Ideally, we would want a trace plot to appear random, like white noise, as a sign of well-mixing models and well-converged chains. Below comparing the left and right plot, the left plot is an example of well-mixed trace plot result, the points appear random, with no specific pattern in the lines, and all 3 chains are converging over the same region. The plot on the right is a not well-mixed model, as we see the orange line has a much higher mean across all iterations than the pink or blue lines.
 
@@ -418,7 +422,7 @@ After running 10,000 simulations with your selected distribution, you're left wi
 
 If instead you had strong reason to believe that there would be `r round(point_estimate, 2)` earthquakes, you may opt for a "stronger" prior by letting $\lambda$ have a much tighter distribution around the mean.
 
-Let's compare each result to the true number of earthquakes that occurred in 2012 (`r true_count`).
+Let's compare each result to the true number of earthquakes that occurred in 2012, which was `r true_count`.
 
 ```{r compare_true, echo=FALSE, fig.width=6, fig.height=4}
 ggplot2::ggplot() +
@@ -509,9 +513,9 @@ gg_orig +
   
 ```
 
-As we have shown, there are numerous ways one can go about forecasting a value for a future period. In the most basic approach, weighted averages provide an easy and explainable answer, but it fails to account for process and parameter risk. By leveraging Bayesian MCMC methods, the results will account for those risks[^1], but at the cost of being more time consuming and less explainable. The decision of which model to use will ultimately come down to personal preference, business considerations, and programming expertise. However, we believe that will the example above and provided supplementary files, you will have the skill set needed to make an informed decision.
+As we have shown, there are numerous ways one can go about forecasting a value for a future period. In the most basic approach, weighted averages provide an easy and explainable answer, but it fails to account for process and parameter risk. By leveraging Bayesian MCMC methods, the results will account for those risks[^1], but at the cost of being more time consuming and less explainable. The decision of which model to use will ultimately come down to personal preference, business considerations, and programming expertise. However, we believe that with the example above and provided supplementary files, you will have the skill set needed to make an informed decision.
 
-[^1]: We should note that it is relitively easy to also incorporate model risk into Bayesian MCMC models. With regards to the example above, one could run a second model that assumes a negative binomial frequency distribution and weight the results together.
+[^1]: We should note that it is relatively easy to also incorporate model risk into Bayesian MCMC models. With regards to the example above, one could run a second model that assumes a negative binomial frequency distribution and weight the results together.
 
 # 6. Supplemental Information
 
@@ -535,7 +539,7 @@ We would like to extend our gratitude to our colleagues for their thoughtful rev
 
 Spencer is a Senior Actuary with Spring Consulting Group. He holds a Bachelor of Science from Lebanon Valley College. Spencer is a Fellow of the Casualty Actuarial Society and a Member of the American Academy of Actuaries.
 
-Kenneth is a Director with Willis Towers Watson. He holds a Bachelor of Science degree in Actuarial Mathematics and Statistics from the University of Pittsburgh. Kenny is a Fellow of the Casualty Actuarial Society and a Member of the American Academy of Actuaries.
+Kenneth is a Director with WTW. He holds a Bachelor of Science degree in Actuarial Mathematics and Statistics from the University of Pittsburgh. Kenny is a Fellow of the Casualty Actuarial Society and a Member of the American Academy of Actuaries.
 
 ## 6.4 Citations
 

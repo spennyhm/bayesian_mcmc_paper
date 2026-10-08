@@ -16,14 +16,14 @@ historical_frequencies[, freq_trend := 1.00 ^ (2024 - year)]
 
 historical_frequencies[, onlevel_rate := rate * freq_trend]
 
-# best fit = Gamma
-
 library(EnvStats)
 
-EnvStats::distChoose(
+dist_fits <- EnvStats::distChoose(
   y = historical_frequencies$onlevel_rate,
   choices = c('gamma', 'lnorm', 'norm', 'weibull')
 )
+
+dist_fits$decision # Gamma, per the default best fit method
 
 ggplot2::ggplot(mapping = ggplot2::aes(sample = historical_frequencies$onlevel_rate)) +
   ggplot2::theme_minimal() +
@@ -85,6 +85,7 @@ ggplot2::ggplot(mapping = ggplot2::aes(sample = historical_frequencies$onlevel_r
     geom = 'line'
   )
 
+# The qq plot does not imply a clear best fit but it confirms Gamma fits the data well so use that
 # now that we have our selected distribution, set up our stan model
 # refer here for help getting rstan installed: https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started
 
@@ -131,6 +132,7 @@ stan_model <- rstan::stan_model(
 )
 
 # fit your model
+gamma_params <- dist_fits$test.results$gamma$distribution.parameters
 
 stan_fit <- rstan::sampling(
   object = stan_model,
@@ -144,18 +146,17 @@ stan_fit <- rstan::sampling(
   data = list(
     N = historical_frequencies[, .N],
     obs = historical_frequencies$onlevel_rate,
-    # per fit using MASS, the MLE of the shape parameter = 448.51500
+    # use MLE estimates as a starting point and adjust accordingly based on prior belief
     # back into value using method of moments and a wide prior (CV = 10%)
-    alpha_param_1 = log(448.515) - 0.5 * log(1 + 0.1^2),
+    alpha_param_1 = log(gamma_params[[1]]) - 0.5 * log(1 + 0.1^2),
     alpha_param_2 = sqrt(log(1 + 0.1^2)),
-    # per fit using MASS, the MLE of the rate parameter = 29.56273
-    beta_param = 1 / 29.56273
+    # use MLE estimates as a starting point and adjust accordingly based on prior belief
+    beta_param = gamma_params[[2]]
   )
 )
 
 # examine diagnostics
-
-rstan::summary(stan_fit) # resulting means are alpha = 444.37632 and beta = 29.28736 (close to our priors)
+rstan::summary(stan_fit) # resulting means are close to our priors
 rstan::check_hmc_diagnostics(stan_fit) # all passed
 rstan::stan_hist(stan_fit)
 rstan::stan_par(stan_fit, par = 'alpha')
@@ -164,7 +165,6 @@ rstan::stan_scat(stan_fit, pars = c('alpha', 'beta'))
 rstan::stan_trace(stan_fit, pars = c('alpha', 'beta'), nrow = 2)
 
 # simulate 2024 frequency rates
-
 set.seed(314159)
 simulated_rates <- purrr::map2_dbl(
   .x = rstan::extract(stan_fit, par = 'alpha')[[1]],
@@ -175,3 +175,9 @@ simulated_rates <- purrr::map2_dbl(
 )
 
 summary(simulated_rates) # per WCIRB, the actual 2024 rate is 16.4
+summary(historical_frequencies$onlevel_rate)
+
+## Concluding remarks ... 
+# while the central estimate of MCMC vs frequentist may be similar, there are two significant benefits:
+# - There is a predictive distribution surrounding your estimate
+# - Able to incorporate all risks outlines in Section 3.1
