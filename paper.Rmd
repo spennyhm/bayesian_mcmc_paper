@@ -4,19 +4,22 @@ author: <p>Spencer Miller<span style='font-variant:small-caps'>, fcas, maaa</spa
 date: 'September 6, 2026' 
 knit: (function(inputFile, encoding) {rmarkdown::render(inputFile, encoding = encoding, output_file = 'A Practical Guide to Using Bayesian Statistics')})
 output: 
-  word_document:
+  officedown::rdocx_document:
     reference_docx: 'styles.docx'
+    plots:
+      align: center
 ---
 
-::: {custom-style="Abstract-Label"}
-Abstract
-:::
+```{r include=FALSE}
+library(officedown)
+officedown::rdocx_document()
+```
 
 ::: {custom-style="Abstract"}
-This paper seeks to provide a practical guide for actuaries to leverage Bayesian methods, as well as a discussion on behavioral economics as a motivating force.
-:::
+**Abstract:** This paper seeks to provide a practical guide for actuaries to leverage Bayesian methods, as well as a discussion on behavioral economics as a motivating force.
 
-**Keywords** --- Bayesian Statistics, Monte Carlo, Markov Chain, MCMC, Stan, Forecasting, Predictions, Behavioral Economics, Bias
+**Keywords:** Bayesian Statistics, Monte Carlo, Markov Chain, MCMC, Stan, Forecasting, Predictions, Behavioral Economics, Bias
+:::
 
 # 1. Introduction
 
@@ -37,15 +40,15 @@ In Section 4, we give a primer on the basics of Bayesian statistics and introduc
 
 In Section 5, we use a real-life example to show how the underlying biases in Section 2 can impact some of the prediction methods from Section 3 and how using Bayesian methods can provide a more realistic range of reasonable estimates.
 
-In Section 6, we provide the reader with additional resources to further explore these topics.
+In Section 6, we provide our conclusion and the reader with additional resources to further explore these topics.
 
-This paper was written using R Markdown. The underlying code is available as a supplementary file. Sample code for setting up a possible model is included as a supplementary file.
+This paper was written using R Markdown. The underlying code is available as a supplementary file. Sample code for setting up a possible model is also included as a supplementary file.
 
 # 2. A Lesson in Behavioral Economics
 
 When making predictions, people often rely on mental operations ("heuristics"). While these may be useful from an evolutionary standpoint, they can lead to "... systematic and predictable errors". Below is a non-exhaustive list of possible factors at play when making actuarial predictions, along with key examples from *Judgment Under Uncertainty: Heuristics and Biases* (Tversky & Kahnemann).
 
-## 2.1 Insensitivity to Sample Size
+## 2.1. Insensitivity to Sample Size
 
 If tasked with estimating the likelihood of a particular result, people tend to base their estimate on the sample's similarity to the population's likelihood, regardless of sample size.
 
@@ -65,7 +68,7 @@ The majority of subjects said the numbers of days would be about the same, while
 
 For a more salient example, consider the actuary's task of estimating the prospective loss ratio for a given book of business when they only have two years of data. If the industry loss ratios and the company's historical loss ratios for that exposure are both consistently in the 75-80% range, one might expect the prospective loss ratio for your book and the industry to be similar. However, the volatility in loss ratios will be greater for your book than for the industry.
 
-## 2.2 Insensitivity to the Prior Probability of Outcomes
+## 2.2. Insensitivity to the Prior Probability of Outcomes
 
 When making a judgment of whether item X belongs to either class A or class B, people will assign it to the class in which the description of item X matches the stereotype of the class, despite the relative likelihood of each class.
 
@@ -79,7 +82,7 @@ When presented with the seemingly uninformative description, subjects now estima
 
 As actuaries, we often rely on industry data to help inform our selections. Suppose as part of a pricing exercise for a relatively new book of business, you see that the actual claim frequency has been exceptionally low. If you were to solely rely on that information and ignore the base rate claim frequency that generally occurs for that exposure, you would risk under-pricing the risk.
 
-## 2.3 Misconception of Chance
+## 2.3. Misconception of Chance
 
 People will expect even a short sample of random events to "look random." For example, when shown two sets of a random sequences of fair coin tosses, subjects will judge "HTHTTH" to be more likely than "HHHTTT", despite the two sets being equally likely.
 
@@ -87,19 +90,19 @@ For an example from our profession, consider the task of selecting trend rates f
 
 While we would like to think that actuaries would be immune to this particular bias, even experienced research psychologists believe they can reach a valid hypothesis by relying on small samples deemed "highly representative of the populations from which they are drawn." As a result, they "... put too much faith in the results of small samples, and grossly overestimated the replicability of such results."
 
-## 2.4 Insensitivity to Predictive Accuracy
+## 2.4. Insensitivity to Predictive Accuracy
 
 When making predictions, studies show that when given only a favorable or unfavorable description, subjects' predictions were "insensitive to the reliability of the description." In other words, people tend to take a description at face value, with little regard to the credibility of the description.
 
 Consider the following example. You are tasked with estimating the average ultimate severity of claims occurring during the upcoming policy year. The recently hired risk manager tells you that there are new post-loss measures being put in place that will reduce the potential of large claims. Taking the risk manager's assessment of the new claims handling process without support could lead to deficient estimates.
 
-## 2.5 Regression to the Mean
+## 2.5. Regression to the Mean
 
 If we observe a higher-than-average value sampled from a known distribution, then one might expect the next sample to be closer to average. However, studies show that many subjects do not always recognize this phenomenon. They can either fail to believe regression is applicable in their specific scenario, or they might "invent spurious causal explanations."
 
 In the case of forecasting losses, one might experience this phenomenon. Suppose losses are generally stable year-over-year, but the most recent year unexpectedly dropped 20% relative to the prior year. How much weight should we give this possible outlier? Do we give more weight to the longer-term average? While there is no right answer, being aware of this potential bias will allow you to make a more well-informed decision.
 
-## 2.6 Anchoring
+## 2.6. Anchoring
 
 In one study, subjects were tasked with estimating the percentage of African countries in the United Nations. Before making their estimate, the subjects were asked to spin a wheel with numbers from 0 to 100. The subjects had to adjust upwards or downwards from this starting value. The median estimate for those with a starting value of 10 was 25%. However, for those with a starting value of 65, they had a significantly higher median estimate of 45%. This example illustrates the concept of anchoring, which is where some initial value influences the estimated value.
 
@@ -107,7 +110,7 @@ Suppose you're in charge of providing a loss forecast for the upcoming accident 
 
 # 3. Statistical Models
 
-## 3.1 Background
+## 3.1. Background
 
 The "actuarial central estimate" is a cornerstone of our profession. It reflects the culmination of years of studying and practice. For a lot of our work, it's all that is typically required. After all, we're seen as the experts and you'd be hard-pressed to find an end user of our work that is as concerned about confidence levels as we are.
 
@@ -119,9 +122,9 @@ As we each have likely missed the mark on a projection at some point in our care
 -   Model Misspecification: The risk that one did not select the right model.
 -   Insufficient Parameter Identification: Results when we fail to consider the uncertainty of our model elements.
 
-These risks are one reason why reserving actuaries often provide a range of reasonable estimates along with their point estimates. 
+These risks are one reason why reserving actuaries often provide a range of reasonable estimates along with their point estimates.
 
-## 3.2 Statistical Schools of Thought
+## 3.2. Statistical Schools of Thought
 
 Two common schools of statistical thinking are Frequentist and Bayesian.
 
@@ -129,9 +132,9 @@ Frequentist statistics is a type of inference that defines probability based on 
 
 Bayesian statistics may sound familiar to you, as the core of Bayesian statistics is an idea called Bayes' theorem, which most actuaries would have learned in an introductory statistics course and is on the CAS Exam P/1 syllabus. We will explore Bayesian statistics further in Section 4.
 
-Most people, and specifically actuaries, rely on frequentist statistics for their analyses. Some of the main distinctions between the two types of inference are:
+Most people, and specifically actuaries, rely on frequentist statistics for their analyses. Some of the main distinctions between the two types of inference are listed below in **Table \@ref(tab:freq_vs_bayes)**:
 
-```{r freq_vs_bayes, echo=FALSE, warning=FALSE}
+```{r echo=FALSE, warning=FALSE, tab.cap='Frequentist vs Bayesian', tab.cap.style = 'Table Caption', tab.id = 'freq_vs_bayes'}
 flextable::regulartable(
   data = data.frame(
     'Component' = c(
@@ -157,7 +160,8 @@ flextable::regulartable(
     )
   ),
   cwidth = c(1.75, 2.25, 2.25)
-) |> flextable::border_inner()
+) |> 
+  flextable::border_inner()
 ```
 
 Upon reviewing these fundamentals, we would argue that actuarial math (as with most predictive statistics) is inherently Bayesian at its core. As actuaries, we typically know historical claim information and can say that claims and events are a known and fixed sample of observations. It is important to note that a lack of historical claims (zero observations) can also be relevant information when modeling.
@@ -166,9 +170,9 @@ When predicting future claims or development on claims, we don't know for certai
 
 As such, Bayesian statistics can greatly improve actuarial models by incorporating parameter risk without really changing our view on known information. Bayesian methods allow for the incorporation of prior knowledge (or what we like to call actuarial judgement) into our prior assumptions to influence our models. Lastly, technological advances have made Bayesian modeling more accessible by minimizing computationally intensive hurdles.
 
-# 4 Bayesian Statistical Modelling
+# 4. Bayesian Statistical Modelling
 
-## 4.1 Basics of Bayesian Statistics
+## 4.1. Basics of Bayesian Statistics
 
 As mentioned previously, the foundation of Bayesian statistics is Bayes' theorem. To give a brief refresher on what Bayes' theorem is: Bayes' theorem describes how to calculate an updated assumption (posterior) beginning with a prior assumption and accounting for new information provided (historical evidence). It is represented by the formula below. Starting with the traditional definition where X and Y are some events and transforming it into our context where we have some observed data and $\theta$, which represents the parameter space we intend to estimate.
 
@@ -183,16 +187,13 @@ We can break Bayes' theorem down into 4 components:
 
 A very important concept here is that applying Bayes' theorem in this way gives us probabilities of the parameter space. We do not get a result of the potential observations. Below we visualize what is happening with Baye's theorem in this context: we are producing an updated posterior, given the prior information and the likelihood.
 
-In the below charts, we see an example of the impact of a weak prior compared to a strong prior distribution on the resulting posterior distribution given the same likelihood function. Under a weak (wider variance) prior distribution, the resulting posterior distribution falls much closer to the observed likelihood of the data, allowing the data to overwhelm the prior distribution. Under a strong (tight variance) prior distribution, the resulting posterior distribution falls much closer to the prior since we are imposing a stricter belief about the parameter set and our result will in turn be much closer to that prior assumption.
+In **Figure \@ref(fig:prior_compare)**, we see an example of the impact of a weak prior compared to a strong prior distribution on the resulting posterior distribution given the same likelihood function. Under a weak (wider variance) prior distribution, the resulting posterior distribution falls much closer to the observed likelihood of the data, allowing the data to overwhelm the prior distribution. Under a strong (tight variance) prior distribution, the resulting posterior distribution falls much closer to the prior since we are imposing a stricter belief about the parameter set and our result will in turn be much closer to that prior assumption.
 
-```{r prior_compare, echo=FALSE, out.width='50%', fig.show='hold'}
-knitr::include_graphics(c(
-  'images/Prior - Weak.png',
-  'images/Prior - Strong.png'
-))
+```{r echo=FALSE, fig.width=6, fig.height=3, fig.cap='Weak vs Strong Prior', fig.topcaption=TRUE, fig.cap.style = 'Image Caption', fig.id='prior_compare'}
+knitr::include_graphics('images/Weak vs Strong Prior.png')
 ```
 
-## 4.2 Markov Chain Monte Carlo (MCMC)
+## 4.2. Markov Chain Monte Carlo (MCMC)
 
 MCMC methods are an effective way of using Bayesian statistics in actuarial models. By effective, we mean that these methods can replace the need to deal with the complex integral in the denominator of Bayes' theorem. Let's start by breaking down the term Markov Chain Monte Carlo:
 
@@ -218,7 +219,7 @@ Extrapolating this example out to statistical terms, if we think about the lily 
 
 This example is a version of the Metropolis-Hastings algorithm, which is a form of an MCMC process. There are several forms of MCMC processes: Gibbs sampling, Metropolis-Hastings, Hamiltonian Monte Carlo, etc. The specifics of how each one works are beyond the scope of this paper.
 
-## 4.3 Execution of MCMC
+## 4.3. Execution of MCMC
 
 MCMC can be executed using Stan, an open-source software, via common coding languages (e.g., Python and R). Later in this paper we dive into a comparison of MCMC fits versus traditional methods and provide a real example of fitting an MCMC process. In this paper, we leverage the RStan package, though there are numerous other packages that can be used (RStan leverages Hamiltonian Monte Carlo).
 
@@ -236,22 +237,19 @@ In order to assess the fit of a MCMC model, there are several diagnostics you ca
 
     To think of it another way, the effective sample size is an estimation of how many ***independent*** iterations are in the simulated results, and so we want a higher effective sample size relative to the number of total iterations in the simulation. For example, if we ran a model with 10,000 iterations, an effective sample size of 7,000 could be considered a positive sign that there is low correlation in the model, and an effective sample size of 200 would indicate that there is high correlation in the model and may not be a well fit model.
 
--   Trace plots show the results of the MCMC model in sequential order of the simulation. Since the output of our model is parameter estimates, we would create a trace plot for each parameter with the iteration number as the x-axis and the corresponding simulated parameter value as the y-value and draw a connecting line so we can see the path of the simulation. Ideally, we would want a trace plot to appear random, like white noise, as a sign of well-mixing models and well-converged chains. Below comparing the left and right plot, the left plot is an example of well-mixed trace plot result, the points appear random, with no specific pattern in the lines, and all 3 chains are converging over the same region. The plot on the right is a not well-mixed model, as we see the orange line has a much higher mean across all iterations than the pink or blue lines.
+-   Trace plots show the results of the MCMC model in sequential order of the simulation. Since the output of our model is parameter estimates, we would create a trace plot for each parameter with the iteration number as the x-axis and the corresponding simulated parameter value as the y-value and draw a connecting line so we can see the path of the simulation. Ideally, we would want a trace plot to appear random, like white noise, as a sign of well-mixing models and well-converged chains. Comparing the left and right plots in **Figure \@ref(fig:trace_compare)**, the left plot is an example of well-mixed trace plot result, the points appear random, with no specific pattern in the lines, and all 3 chains are converging over the same region. The plot on the right is a not well-mixed model, as we see the orange line has a much higher mean across all iterations than the pink or blue lines.
 
-    ```{r trace_compare, echo=FALSE, out.width='50%', fig.show='hold'}
-    knitr::include_graphics(c(
-      'images/Trace - Good.png',
-      'images/Trace - Bad.png'
-    ))
-    ```
+```{r echo=FALSE, fig.width=6, fig.height=2.5, fig.cap='Good vs Bad Trace Plot', fig.topcaption=TRUE, fig.cap.style = 'Image Caption', fig.id='trace_compare'}
+knitr::include_graphics('images/Bad vs Good Trace.png')
+```
 
 # 5. An Example in Action
 
 For our example, let's assume you are tasked with estimating the expected frequency of global earthquakes over 6.0 magnitude for the year 2012. You are given a dataset of prior earthquakes since 1983.
 
-First, let's get the data we'll be using in our example. Below is the history for 1983 through 2011.
+First, let's get the data we'll be using in our example. **Figure \@ref(fig:data_by_year)** shows the history for 1983 through 2011.
 
-```{r data_by_year, echo=FALSE, warning=FALSE, fig.width=6, fig.height=4}
+```{r echo=FALSE, warning=FALSE, fig.width=6, fig.height=4, fig.cap='Earthquake Frequency from 1983 to 2011', fig.topcaption=TRUE, fig.cap.style = 'Image Caption', fig.id='data_by_year'}
 options(scipen = 999)
 
 data(eqlist, package = 'CASdatasets')
@@ -280,7 +278,6 @@ gg_orig <- ggplot2::ggplot() +
     panel.grid.minor.x = ggplot2::element_blank(),
     panel.grid.minor.y = ggplot2::element_blank()
   ) +
-  ggplot2::labs(title = 'Frequency of 6.0 Maginitude Earthquakes') +
   ggplot2::geom_col(
     data = counts,
     mapping = ggplot2::aes(
@@ -324,7 +321,7 @@ Your next logical step might be to add some process risk around your estimate by
 
 $X \sim Pois(\lambda = `r round(point_estimate, 2)`)$
 
-```{r process_risk, include=FALSE}
+```{r include=FALSE}
 process_risk_lambda <- point_estimate
 
 set.seed(314159)
@@ -358,8 +355,6 @@ parameter_risk <- mean(parameter_risk_sample)
 
 After running another 10,000 simulations, you're left with a central estimate of `r round(parameter_risk, 2)`. Even though we let lambda vary, the result is still quite close to the point estimate.
 
-\newpage
-
 But as we discussed earlier, there are a few problems with just relying on our data:
 
 -   The sample size is on the low end (n = `r nrow(counts)`).
@@ -370,7 +365,7 @@ How do we handle these possible biases? That's where Bayesian MCMC comes in. We'
 
 $X|data \sim Pois(\lambda \sim ChiSquare(d.f. = `r round(point_estimate, 2)`))$
 
-```{r bayesian, include=FALSE}
+```{r include=FALSE}
 bayesian_stan_model <- rstan::stan(
   model_code = '
       data{
@@ -422,9 +417,9 @@ After running 10,000 simulations with your selected distribution, you're left wi
 
 If instead you had strong reason to believe that there would be `r round(point_estimate, 2)` earthquakes, you may opt for a "stronger" prior by letting $\lambda$ have a much tighter distribution around the mean.
 
-Let's compare each result to the true number of earthquakes that occurred in 2012, which was `r true_count`.
+Let's compare each result to the true number of earthquakes that occurred in 2012, which was `r true_count`. The results are shown in **Figure \@ref(fig:compare_true)**.
 
-```{r compare_true, echo=FALSE, fig.width=6, fig.height=4}
+```{r echo=FALSE, fig.width=6, fig.height=4, fig.cap='Distribution of Method Results', fig.topcaption=TRUE, fig.cap.style = 'Image Caption', fig.id='compare_true'}
 ggplot2::ggplot() +
   ggplot2::theme_minimal() +
   ggplot2::theme(
@@ -482,16 +477,16 @@ ggplot2::ggplot() +
   )
 ```
 
-It appears that all four methods severely overestimated the true average frequency. However, if we look at the Bayesian versus the other three, the true count is a more likely outcome. The "true count" is approximately equal to the `r scales::percent(length(bayesian_sample[bayesian_sample <= true_count]) / iterations, accuracy = 0.1)` confidence level of our Bayesian estimate. While this may still seem low, it is relatively close to the proportion of historical counts below `r true_count` (`r scales::percent(length(counts$count[counts$count <= true_count]) / nrow(counts), accuracy = 0.1)`).
+It appears that all four methods severely overestimated the true average frequency. However, if we look at the Bayesian versus the other three, the true count is a more likely outcome. The true count is approximately equal to the `r scales::percent(length(bayesian_sample[bayesian_sample <= true_count]) / iterations, accuracy = 0.1)` confidence level of our Bayesian estimate. While this may still seem low, it is relatively close to the proportion of historical counts below `r true_count` (`r scales::percent(length(counts$count[counts$count <= true_count]) / nrow(counts), accuracy = 0.1)`).
 
 Additionally, there are essentially no "extreme" values (225+) being simulated.
 
 With the benefit of hindsight, let's see why we overestimated the true counts in all four methods. As it turns out, we fell prey to (at least) two key biases:
 
 -   Misconception of chance: Humans just aren't that great at identifying random processes. For example, a series of coin tosses with all heads is seen as "less random" than a series with alternating heads and tails, even though both results are equally likely.
--   Regression to the mean: As seen below, the high average for 2007-2011 was followed by a low average in 2012-2023. This resulted in the new all-year average (1983-2023) being nearly identical to the all-year average before the rise (1983-2006).
+-   Regression to the mean: As seen in **Figure \@ref(fig:plot_full)**, the high average for 2007-2011 was followed by a low average in 2012-2023. This resulted in the new all-year average (1983-2023) being nearly identical to the all-year average before the rise (1983-2006).
 
-```{r plot_full, echo=FALSE, fig.width=6, fig.height=4}
+```{r echo=FALSE, fig.width=6, fig.height=4, fig.cap='Earthquake Frequency from 1983 to 2023', fig.topcaption=TRUE, fig.cap.style = 'Image Caption', fig.id='plot_full'}
 gg_orig +
   ggplot2::geom_col(
     mapping = ggplot2::aes(
@@ -513,13 +508,11 @@ gg_orig +
   
 ```
 
+# 6. Conclusion
+
 As we have shown, there are numerous ways one can go about forecasting a value for a future period. In the most basic approach, weighted averages provide an easy and explainable answer, but it fails to account for process and parameter risk. By leveraging Bayesian MCMC methods, the results will account for those risks[^1], but at the cost of being more time consuming and less explainable. The decision of which model to use will ultimately come down to personal preference, business considerations, and programming expertise. However, we believe that with the example above and provided supplementary files, you will have the skill set needed to make an informed decision.
 
 [^1]: We should note that it is relatively easy to also incorporate model risk into Bayesian MCMC models. With regards to the example above, one could run a second model that assumes a negative binomial frequency distribution and weight the results together.
-
-# 6. Supplemental Information
-
-## 6.1 Literature Review
 
 While our paper focused on the usage of Bayesian MCMC methods for forecasting purposes, the methods can and have been used in other applications. We provide a non-exhaustive list below of papers that utilize these methods to some extent:
 
@@ -531,50 +524,36 @@ While our paper focused on the usage of Bayesian MCMC methods for forecasting pu
 
 We believe there are several other possible applications, ranging from the selection of development factors to estimating reserve variability. We leave it to the reader to explore these.
 
-## 6.2 Acknowledgements
+## Acknowledgements
 
-We would like to extend our gratitude to our colleagues for their thoughtful reviews.
+We would like to extend our gratitude to our current and former colleagues for their thoughtful reviews.
 
-## 6.3 Biographies of the Authors
+## Biographies of the Authors
 
 Spencer is a Senior Actuary with Spring Consulting Group. He holds a Bachelor of Science from Lebanon Valley College. Spencer is a Fellow of the Casualty Actuarial Society and a Member of the American Academy of Actuaries.
 
 Kenneth is a Director with WTW. He holds a Bachelor of Science degree in Actuarial Mathematics and Statistics from the University of Pittsburgh. Kenny is a Fellow of the Casualty Actuarial Society and a Member of the American Academy of Actuaries.
 
-## 6.4 Citations
+## Citations
 
-A. Tversky, and D. Kahneman. 1974. "Judgment Under Uncertainty: Heuristics and Biases." Science 185, 1124--1131.
+Aminzadeh and Deng. 2022. "Bayesian Estimation of Renewal Function Based on Pareto-Distributed Inter-Arrival Times via an MCMC Algorithm." Variance 15 (2).
 
-Aminzadeh, M.S., and Min Deng. 2022. "Bayesian Estimation of Renewal Function Based on Pareto-Distributed Inter-Arrival Times via an MCMC Algorithm." Variance 15 (2).
+Dutang and Charpentier. 2025. "CASdatasets: Insurance Datasets." <https://doi.org/10.57745/P0KHAG>.
 
-Ford, Patrick. *MCMC Algorithms*. Casualty Actuarial Society, April 2018.
+Meyers. 2015. "Stochastic Loss Reserving Using Bayesian MCMC Models." CAS Monograph #1.
 
-Meyers, G. 2015. "Stochastic Loss Reserving Using Bayesian MCMC Models." CAS Monograph #1.
+Meyers. 2019. "A Cost-of-Capital Risk Margin Formula for Nonlife Insurance Liabilities." Variance 12 (2).
 
-Meyers, G. 2019. "A Cost-of-Capital Risk Margin Formula for Nonlife Insurance Liabilities." Variance 12 (2).
+Patrick. 2018. *MCMC Algorithms*. Casualty Actuarial Society, April 2018.
 
-Sahasrabuddhe, R. 2021. "The Single Parameter Pareto Revisited." Casualty Actuarial Society E-Forum, Spring 2021.
+Sahasrabuddhe. 2021. "The Single Parameter Pareto Revisited." Casualty Actuarial Society E-Forum, Spring 2021.
 
-Schmid, F. 2013. "Bayesian Trend Selection." Casualty Actuarial Society E-Forum, Spring 2013.
-
-Venter, Gary, and Rajesh Sahasrabuddhe. 2015. "A Note on Parameter Risk." Variance 9 (1).
-
-Verrall, R. J. 2007. "Obtaining Predictive Distributions for Reserves Which Incorporate Expert Opinion." Variance 1 (1).
-
-## 6.5 R Packages
-
-Barrett, Tyson, Matt Dowle, Arun Srinivasan, Jan Gorecki, Michael Chirico, Toby Hocking, Benjamin Schwendinger, and Ivan Krylov. 2025. "Data.table: Extension of 'Data.frame'." <https://CRAN.Rproject.org/package=data.table>.
-
-Dutang, Christophe, and Arthur Charpentier. 2025. "CASdatasets: Insurance Datasets." <https://doi.org/10.57745/P0KHAG>.
-
-Garrett Grolemund, Hadley Wickham. 2011. "Dates and Times Made Easy with lubridate." <https://www.jstatsoft.org/v40/i03/>.
-
-Gohel D, Skintzos P. 2026. "flextable: Functions for Tabular Reporting." <https://CRAN.R-project.org/package=flextable>.
+Schmid. 2013. "Bayesian Trend Selection." Casualty Actuarial Society E-Forum, Spring 2013.
 
 Stan Development Team. 2025. "{RStan}: The {r} Interface to {Stan}." <https://mc-stan.org/>.
 
-Wickham, Hadley. 2016. "ggplot2: Elegant Graphics for Data Analysis." <https://ggplot2.tidyverse.org>.
+Tversky and Kahneman. 1974. "Judgment Under Uncertainty: Heuristics and Biases." Science 185, 1124-1131.
 
-Wickham H, Henry L. 2026. "purrr: Functional Programming Tools". <https://CRAN.R-project.org/package=purrr>.
+Venter and Sahasrabuddhe. 2015. "A Note on Parameter Risk." Variance 9 (1).
 
-Xie Y. 2025. "knitr: A General-Purpose Package for Dynamic Report Generation in R". <https://yihui.org/knitr/>.
+Verrall. 2007. "Obtaining Predictive Distributions for Reserves Which Incorporate Expert Opinion." Variance 1 (1).
