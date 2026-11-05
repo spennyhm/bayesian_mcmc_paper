@@ -8,6 +8,8 @@ output:
     reference_docx: 'styles.docx'
     plots:
       align: center
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r include=FALSE}
@@ -20,6 +22,8 @@ officedown::rdocx_document()
 
 **Keywords:** Bayesian Statistics, Monte Carlo, Markov Chain, MCMC, Stan, Forecasting, Predictions, Behavioral Economics, Bias
 :::
+
+\newpage
 
 # 1. Introduction
 
@@ -76,7 +80,7 @@ For example, when subjects were tasked with evaluating the likelihood of whether
 
 > Dick is a 30-year old man. He is married with no children. A man of high ability and high motivation, he promises to be quite successful in his field. He is well liked by his colleagues.
 
-When presented with this description, subjects "evaluated the likelihood that a particular description belonged to an engineer rather than to a lawyer ... with little or no regard for the prior probabilities of the two outcomes."
+When presented with this description, subjects "evaluated the likelihood that a particular description belonged to an engineer rather than to a lawyer ... with little or no regard for the prior probabilities of the two outcomes" (Tversky & Kahnemann).
 
 When presented with the seemingly uninformative description, subjects now estimated the relative likelihoods to be equal (50% & 50%). That is, they ignored the distribution of professions from the population (30% & 70%). Even though the description offers no clue as to what profession Dick might belong to, subjects ignored the distribution of professions for the populations.
 
@@ -92,13 +96,13 @@ While we would like to think that actuaries would be immune to this particular b
 
 ## 2.4. Insensitivity to Predictive Accuracy
 
-When making predictions, studies show that when given only a favorable or unfavorable description, subjects' predictions were "insensitive to the reliability of the description." In other words, people tend to take a description at face value, with little regard to the credibility of the description.
+When making predictions, studies show that when given only a favorable or unfavorable description, subjects' predictions were "insensitive to the reliability of the description" (Tversky & Kahnemann). In other words, people tend to take a description at face value, with little regard to the credibility of the description.
 
 Consider the following example. You are tasked with estimating the average ultimate severity of claims occurring during the upcoming policy year. The recently hired risk manager tells you that there are new post-loss measures being put in place that will reduce the potential of large claims. Taking the risk manager's assessment of the new claims handling process without support could lead to deficient estimates.
 
 ## 2.5. Regression to the Mean
 
-If we observe a higher-than-average value sampled from a known distribution, then one might expect the next sample to be closer to average. However, studies show that many subjects do not always recognize this phenomenon. They can either fail to believe regression is applicable in their specific scenario, or they might "invent spurious causal explanations."
+If we observe a higher-than-average value sampled from a known distribution, then one might expect the next sample to be closer to average. However, studies show that many subjects do not always recognize this phenomenon. They can either fail to believe regression is applicable in their specific scenario, or they might "invent spurious causal explanations" (Tversky & Kahnemann).
 
 In the case of forecasting losses, one might experience this phenomenon. Suppose losses are generally stable year-over-year, but the most recent year unexpectedly dropped 20% relative to the prior year. How much weight should we give this possible outlier? Do we give more weight to the longer-term average? While there is no right answer, being aware of this potential bias will allow you to make a more well-informed decision.
 
@@ -118,21 +122,23 @@ As we each have likely missed the mark on a projection at some point in our care
 
 -   Process Risk: Inherent uncertainty of the insurance claims process.
 -   Sampling Risk: Differences between observed sample and the population.
--   Data Bias: Results from incorrectly adjusting data in experience period to be on same basis (e.g., cost level) as the exposure period.
+-   Data Bias: Results from incorrectly adjusting data in the experience period to be on same basis (e.g., cost level) as the exposure period.
 -   Model Misspecification: The risk that one did not select the right model.
 -   Insufficient Parameter Identification: Results when we fail to consider the uncertainty of our model elements.
 
-These risks are one reason why reserving actuaries often provide a range of reasonable estimates along with their point estimates.
+These risks are one reason why reserving actuaries often utilize multiple methods to produce a range of reasonable estimates before selecting their point estimates.
 
 ## 3.2. Statistical Schools of Thought
 
 Two common schools of statistical thinking are Frequentist and Bayesian.
 
-Frequentist statistics is a type of inference that defines probability based on (as the name implies) an events frequency from a repeatable experiment.
+Frequentist statistics is a type of inference that defines probability based on (as the name implies) an event's frequency from a repeatable experiment.
 
 Bayesian statistics may sound familiar to you, as the core of Bayesian statistics is an idea called Bayes' theorem, which most actuaries would have learned in an introductory statistics course and is on the CAS Exam P/1 syllabus. We will explore Bayesian statistics further in Section 4.
 
 Most people, and specifically actuaries, rely on frequentist statistics for their analyses. Some of the main distinctions between the two types of inference are listed below in **Table \@ref(tab:freq_vs_bayes)**:
+
+\newpage
 
 ```{r echo=FALSE, warning=FALSE, tab.cap='Frequentist vs Bayesian', tab.cap.style = 'Table Caption', tab.id = 'freq_vs_bayes'}
 flextable::regulartable(
@@ -153,7 +159,7 @@ flextable::regulartable(
     ),
     Bayesian = c(
       'Known and fixed sample',
-      'Unknown',
+      'Random',
       'Subjective',
       'Significant',
       'Describes the parameter spaces probabilistically based on observations and prior assumptions'
@@ -161,10 +167,11 @@ flextable::regulartable(
   ),
   cwidth = c(1.75, 2.25, 2.25)
 ) |> 
-  flextable::border_inner()
+  flextable::border_inner() |>
+  flextable::font(fontname = 'Calibri', part = 'all')
 ```
 
-Upon reviewing these fundamentals, we would argue that actuarial math (as with most predictive statistics) is inherently Bayesian at its core. As actuaries, we typically know historical claim information and can say that claims and events are a known and fixed sample of observations. It is important to note that a lack of historical claims (zero observations) can also be relevant information when modeling.
+Upon reviewing these fundamentals, we would argue that actuarial math (as with most predictive statistics) is inherently Bayesian at its core. As actuaries, we typically know historical claim information and can say that claims and events are a known and fixed sample of observations. It is important to note that a lack of historical claims (zero observations) can also be relevant information when modeling; which is something traditional credibility theory can fail to capture.
 
 When predicting future claims or development on claims, we don't know for certain the parameters of the future. However, given the historical information and our expertise we can describe some basis of prior assumption about the parameters. Finally, as we want to capture as much risk in our modelling as possible, a frequentist approach typically lacks parameter risk if parameters are fixed.
 
@@ -176,7 +183,7 @@ As such, Bayesian statistics can greatly improve actuarial models by incorporati
 
 As mentioned previously, the foundation of Bayesian statistics is Bayes' theorem. To give a brief refresher on what Bayes' theorem is: Bayes' theorem describes how to calculate an updated assumption (posterior) beginning with a prior assumption and accounting for new information provided (historical evidence). It is represented by the formula below. Starting with the traditional definition where X and Y are some events and transforming it into our context where we have some observed data and $\theta$, which represents the parameter space we intend to estimate.
 
-$P(Y|X) = \frac{P(X|Y)}{P(X)} = \frac{f(X|Y)(f(Y)}{\int_{-\infty}^{\infty} f(X|Y)(f(Y)dy} = \frac{f(data|\theta)*f(\theta)}{\int f(data|\theta)*f(\theta)d\theta} = P(\theta|data)$
+$P(Y|X) = \frac{P(X|Y)}{P(X)} = \frac{f(X|Y)f(Y)}{\int_{-\infty}^{\infty} f(X|Y)f(Y)dy} = \frac{f(data|\theta)*f(\theta)}{\int f(data|\theta)*f(\theta)d\theta} = P(\theta|data)$
 
 We can break Bayes' theorem down into 4 components:
 
@@ -184,6 +191,10 @@ We can break Bayes' theorem down into 4 components:
 2.  The prior $f(\theta)$ --- the probability distribution of the parameters
 3.  The evidence $\int f(data|\theta)*f(\theta)d\theta$ --- the likelihood of the data given all potential parameters in the distribution (*this integral can become very difficult to calculate*)
 4.  The posterior $P(\theta|data)$ --- the result, which is the modified probability of the parameter space after accounting for the data.
+
+::: {custom-style="Highlight"}
+OBVIOUSLY NEEDS FINE TUNED BUT WHAT ABOUT THIS? Simply put, you start with prior (die is fair), observe some evidence (rolled two straight sixes), then form a hypothesis given the evidence to derive a likelihood function (p(6) = 40% instead of 1/6). The resulting posterior distribution is the result.
+:::
 
 A very important concept here is that applying Bayes' theorem in this way gives us probabilities of the parameter space. We do not get a result of the potential observations. Below we visualize what is happening with Baye's theorem in this context: we are producing an updated posterior, given the prior information and the likelihood.
 
@@ -203,7 +214,7 @@ MCMC methods are an effective way of using Bayesian statistics in actuarial mode
 
 -   Putting **Markov chain** and **Monte Carlo** methods together, **MCMC** is a way to gather a representation of the posterior distribution via simulation and repeated sampling.
 
-It is easy to think about these two items separately, but what might an example of this look like in action?
+It is easy to think about these two items separately, but what might an example of this look like in action? The following example attempts to describe how an MCMC process works using the Metropolis-Hastings algorithm. The Metropolis-Hastings algorithm is one of many forms of MCMC processes. Other forms include Gibbs sampling and Hamiltonian Monte Carlo, the specifics of which are beyond the scope of this paper.
 
 Imagine there is a single frog on a pond covered in lily pads. The frog can jump from one lily pad to any of the other lily pads in the pond. The frog is more likely to jump to lily pads that are closer to it, but it can certainly hop all the way across the pond to another lily pad.
 
@@ -217,8 +228,6 @@ Hopefully, this is starting to paint a picture of what an MCMC process looks lik
 
 Extrapolating this example out to statistical terms, if we think about the lily pads as being different parameter sets, the frog jumps around from parameter set to parameter set trying to find one that fits the frog's needs well. We can think about the frog liking a certain lily pad as how well the parameter set (e.g., the given lily pad) describes the observed data (e.g., the amount of sunlight). This is just a likelihood function (i.e., what is the likelihood of the data given the parameter set). In an MCMC simulation, if that likelihood is above or below some random simulated threshold, we will accept or reject the parameter set (e.g., will the frog stay at that lily pad or go back to the one it jumped there from). Finally, if the frog continues to jump around repeatedly, we observe which lily pads the frog spends the most time on, we can end up with a distribution of which lily pads the frog liked best. In statistical terms, this equates to which parameter sets that are most likely to describe the data.
 
-This example is a version of the Metropolis-Hastings algorithm, which is a form of an MCMC process. There are several forms of MCMC processes: Gibbs sampling, Metropolis-Hastings, Hamiltonian Monte Carlo, etc. The specifics of how each one works are beyond the scope of this paper.
-
 ## 4.3. Execution of MCMC
 
 MCMC can be executed using Stan, an open-source software, via common coding languages (e.g., Python and R). Later in this paper we dive into a comparison of MCMC fits versus traditional methods and provide a real example of fitting an MCMC process. In this paper, we leverage the RStan package, though there are numerous other packages that can be used (RStan leverages Hamiltonian Monte Carlo).
@@ -229,17 +238,19 @@ Relating back to our frog in a pond example, breaking into chains, ensures that 
 
 In order to assess the fit of a MCMC model, there are several diagnostics you can analyze:
 
--   R-hat, also known as the Gelman-Rubin statistic, is a diagnostic that is used to assess the convergence of the simulation. It is calculated as the square root of the ratio of the variance between simulation chains to the variance within the chains. A well-converging model will have an R-hat statistic close to 1.0, as is implied by the formula that the variance between chains is relatively equal to the variance within a chain.
+-   $\hat{R}$, also known as the Gelman-Rubin statistic, is a diagnostic that is used to assess the convergence of the simulation. It is calculated by comparing the variance between simulation chains to the variance within the individual chains. 
+    
+    The $\hat{R}$ statistic is calculated as $\scriptstyle \hat{R} = \sqrt{(\frac{N-1}{N}W+\frac{B}{W})/W}$, where $N$ is the number of iterations per chain, $W$ is the within-chain variance (measuring variance inside each individual chain), and B is the between-chain variance (measuring variance between the means of difference chains).
 
--   Effective Sample Size (N-eff) tests the correlation of the sampling done in the simulation. Since it is a Markov chain and the next iteration is dependent on the current starting position, there is going to be correlation between samples. The effective sample size statistic helps identify how much correlation occurs during the sampling through the following formula:
+    A well-converging model will have an $\hat{R}$ statistic close to 1.0.
 
-    $ESS = \frac{n}{1 + 2*\sum_{k=1}^{\infty} \rho (k)}$, where $n$ is the number of iterations and $\rho (k)$ is the correlation at lag $k$.
+-   Effective Sample Size (N-eff) tests the correlation of the sampling done in the simulation. Since it is a Markov chain and the next iteration is dependent on the current starting position, there is going to be correlation between samples. The effective sample size statistic, $\scriptstyle ESS = n/(1 + 2*\sum_{k=1}^{\infty} \rho (k))$, helps identify how much correlation occurs during the sampling through the following formula, where $n$ is the number of iterations and $\rho (k)$ is the correlation at lag $k$.
 
-    To think of it another way, the effective sample size is an estimation of how many ***independent*** iterations are in the simulated results, and so we want a higher effective sample size relative to the number of total iterations in the simulation. For example, if we ran a model with 10,000 iterations, an effective sample size of 7,000 could be considered a positive sign that there is low correlation in the model, and an effective sample size of 200 would indicate that there is high correlation in the model and may not be a well fit model.
+    To think of it another way, the effective sample size is an estimation of how many ***independent*** iterations are in the simulated results, and so we want a higher effective sample size relative to the number of total iterations in the simulation. For example, if we ran a model with 10,000 iterations, an effective sample size of 7,000 could be considered a positive sign that there is low correlation in the model, and an effective sample size of 200 would indicate that there is high correlation in the model and it may not be a well fit model.
 
--   Trace plots show the results of the MCMC model in sequential order of the simulation. Since the output of our model is parameter estimates, we would create a trace plot for each parameter with the iteration number as the x-axis and the corresponding simulated parameter value as the y-value and draw a connecting line so we can see the path of the simulation. Ideally, we would want a trace plot to appear random, like white noise, as a sign of well-mixing models and well-converged chains. Comparing the left and right plots in **Figure \@ref(fig:trace_compare)**, the left plot is an example of well-mixed trace plot result, the points appear random, with no specific pattern in the lines, and all 3 chains are converging over the same region. The plot on the right is a not well-mixed model, as we see the orange line has a much higher mean across all iterations than the pink or blue lines.
+-   Trace plots show the results of the MCMC model in sequential order of the simulation. Since the output of our model is parameter estimates, we would create a trace plot for each parameter with the iteration number as the x-axis and the corresponding simulated parameter value as the y-value and draw a connecting line so we can see the path of the simulation. Ideally, we would want a trace plot to appear random, like white noise, as a sign of well-mixing models and well-converged chains. Comparing the left and right plots in **Figure \@ref(fig:trace_compare)**, the left plot is a not well-mixed model, as we see the orange line has a much higher mean across all iterations than the pink or blue lines. The plot on the right is an example of well-mixed trace plot result, the points appear random, with no specific pattern in the lines, and all 3 chains are converging over the same region.
 
-```{r echo=FALSE, fig.width=6, fig.height=2.5, fig.cap='Good vs Bad Trace Plot', fig.topcaption=TRUE, fig.cap.style = 'Image Caption', fig.id='trace_compare'}
+```{r echo=FALSE, fig.width=6, fig.height=2.5, fig.cap='Bad vs Good Trace Plot', fig.topcaption=TRUE, fig.cap.style = 'Image Caption', fig.id='trace_compare'}
 knitr::include_graphics('images/Bad vs Good Trace.png')
 ```
 
@@ -247,7 +258,7 @@ knitr::include_graphics('images/Bad vs Good Trace.png')
 
 For our example, let's assume you are tasked with estimating the expected frequency of global earthquakes over 6.0 magnitude for the year 2012. You are given a dataset of prior earthquakes since 1983.
 
-First, let's get the data we'll be using in our example. **Figure \@ref(fig:data_by_year)** shows the history for 1983 through 2011.
+First, let's get the data we'll be using in our example. **Figure \@ref(fig:data_by_year)** shows the historical frequency from 1983 to 2011.
 
 ```{r echo=FALSE, warning=FALSE, fig.width=6, fig.height=4, fig.cap='Earthquake Frequency from 1983 to 2011', fig.topcaption=TRUE, fig.cap.style = 'Image Caption', fig.id='data_by_year'}
 options(scipen = 999)
@@ -267,6 +278,11 @@ counts <- df[year %in% 1983:(prosp_year - 1)]
 true_count <- df[year == prosp_year, count]
 
 point_estimate <- mean(counts[year >= prosp_year - 5, count])
+subset_variance <- var(counts[year >= prosp_year - 5, count])
+
+nb_mu <- point_estimate
+nb_mu_cv <- 0.1
+nb_phi <- round(point_estimate ^ 2 / (subset_variance - point_estimate), 2)
 
 gg_orig <- ggplot2::ggplot() +
   ggplot2::scale_x_continuous(name = 'Year', breaks = seq(1983, 2023, 3)) +
@@ -288,72 +304,83 @@ gg_orig <- ggplot2::ggplot() +
     fill = 'lightgrey',
     alpha = 0.5
   ) +
-  ggplot2::geom_hline(
+  ggplot2::geom_line(
     mapping = ggplot2::aes(
-      yintercept = point_estimate,
+      x = (prosp_year - 5):(prosp_year - 1),
+      y = rep(point_estimate, 5),
       color = 'Five-Year Average'
-    )
+    ),
+    linetype = 'dashed',
+    linewidth = 0.75
   ) +
   ggplot2::geom_hline(
     mapping = ggplot2::aes(
       yintercept = mean(counts$count),
       color = 'All-Year Average'
-    )
+    ),
+    linetype = 'longdash',
+    linewidth = 0.75
   ) +
   ggplot2::geom_text(
     mapping = ggplot2::aes(
-      x = 1987,
+      x = prosp_year - 3,
       y = point_estimate,
-      label = paste0('Point Estimate = ', round(point_estimate, 2))
+      label = paste0('Average\n=', round(point_estimate, 1))
     ),
-    vjust = -0.5,
+    vjust = -0.25,
+    size = 3
+  ) +
+  ggplot2::geom_text(
+    mapping = ggplot2::aes(
+      x = 2003,
+      y = mean(counts$count),
+      label = paste0('Average\n=', round(mean(counts$count), 1))
+    ),
+    vjust = -0.25,
     size = 3
   )
 
 gg_orig
 ```
 
-In the simplest case, you may decide given the recent trend, that the five-year average is the best approximation of future frequency. In this case, your selected frequency is `r round(point_estimate, 2)` ("Point Estimate"). This approach is consistent with the frequentist methods described earlier and can be written as follows:
+In the simplest case, you may decide given the recent trend, that the eight-year average is the best approximation of future frequency. In this case, your selected frequency is `r round(point_estimate, 2)` ("Point Estimate"). This approach is consistent with the frequentist methods described earlier and can be written as follows:
 
 $X = `r round(point_estimate, 2)`$
 
-Your next logical step might be to add some process risk around your estimate by fitting a distribution to the data. Based on an examination of the data, you decide to model frequency using the Poisson distribution with lambda = `r round(point_estimate, 2)`. This can written as follows:
+Your next logical step might be to add some process risk around your estimate by fitting a distribution to the data. Based on an examination of the data, you decide to model frequency using the Negative Binomial distribution with $\mu = `r nb_mu`$ and $\phi = `r nb_phi`$ (estimated via method of moments using last five years of data). This can written as follows:
 
-$X \sim Pois(\lambda = `r round(point_estimate, 2)`)$
+$X \sim NegBin(\mu = `r nb_mu`,\ \phi = `r nb_phi`)$
 
 ```{r include=FALSE}
-process_risk_lambda <- point_estimate
-
 set.seed(314159)
-iterations <- 10000
+iterations <- 1e5
 
-process_risk_sample <- stats::rpois(n = iterations, lambda = process_risk_lambda)
+process_risk_sample <- stats::rnbinom(n = iterations, size = nb_phi, mu = nb_mu)
 
 process_risk <- mean(process_risk_sample)
 ```
 
-After running 10,000 simulations with your selected distribution, you're left with a central estimate of `r round(process_risk, 2)`. Not surprisingly, this is essentially the same as your point estimate. However, you now have a predictive distribution.
+After running 100,000 simulations with your selected distribution, you're left with a central estimate of `r round(process_risk, 2)`. Not surprisingly, this is essentially the same as your point estimate. However, you now have a predictive distribution. These simulations will be used later on in our comparison of methods.
 
-Another possible step would be to layer in parameter risk since we might not be convinced of our selected lambda. You decide on letting lambda follow a chi-square distribution with degrees of freedom equal to your point estimate. This can written as follows:
+Another possible step would be to layer in parameter risk since we might not be convinced of our selected parameters. You decide on letting $mu$ follow a normal distribution centered at your point estimate with a subjective range around it (coefficient of variation = `r scales::percent(nb_mu_cv)`) and decide to keep $\phi$ fixed such that the variance is maintained. This can written as follows:
 
-$X \sim Pois(\lambda \sim ChiSquare(d.f. = `r round(point_estimate, 2)`))$
+$X \sim NegBin(\mu \sim Norm(mean = `r nb_mu`,\ sd = `r nb_mu * nb_mu_cv`),\ \phi = `r nb_phi`)$
 
 ```{r parameter_risk, include=FALSE}
 set.seed(314159)
 
-parameter_risk_lambda <- stats::rchisq(n = iterations, df = point_estimate)
-# summary(parameter_risk_lambda)
+parameter_risk_mu <- stats::rnorm(n = iterations, mean = nb_mu, sd = nb_mu * nb_mu_cv)
+parameter_risk_phi <- round(parameter_risk_mu ^ 2 / (subset_variance - parameter_risk_mu), 2)
 
 parameter_risk_sample <- purrr::map_dbl(
   .x = 1:iterations, 
-  .f = function(i) stats::rpois(n = 1, lambda = parameter_risk_lambda[i])
+  .f = function(i) stats::rnbinom(n = 1, mu = parameter_risk_mu[i], size = parameter_risk_phi[i])
 )
-# summary(parameter_risk_sample)
 
 parameter_risk <- mean(parameter_risk_sample)
 ```
 
-After running another 10,000 simulations, you're left with a central estimate of `r round(parameter_risk, 2)`. Even though we let lambda vary, the result is still quite close to the point estimate.
+After running another 100,000 simulations, you're left with a central estimate of `r round(parameter_risk, 2)`. Even though we let $mu$ vary, the result is still quite close to the point estimate. This should not be surprising since that is by definition.
 
 But as we discussed earlier, there are a few problems with just relying on our data:
 
@@ -361,9 +388,13 @@ But as we discussed earlier, there are a few problems with just relying on our d
 -   How much weight do you give to recent experience?
 -   It might look like there is a "new normal", but you could be seeing a trend where there isn't one.
 
-How do we handle these possible biases? That's where Bayesian MCMC comes in. We'll continue with the distribution from our parameter risk model but now we let our data inform the simulated lambda value. As an example, if our chi-square simulated lambda is 231 (99th percentile of our chi-square distribution) but the largest data point is only 207, that iteration may not get used (i.e., the frog jumped back to its previous lily pad). This can be written as follows:
+How do we handle these possible biases? That's where Bayesian MCMC comes in. We'll continue with the distribution from our parameter risk model but now we let our data inform the simulated lambda value. In other words, if a simulated $mu$ value is deemed unlikely given our data, it will be rejected (i.e., the frog jumped back to its previous lily pad).
 
-$X|data \sim Pois(\lambda \sim ChiSquare(d.f. = `r round(point_estimate, 2)`))$
+In addition to the prior distribution we chose for $mu$, we will assume that $phi$ follows an exponential distribution.[^1] Our Bayesian model can be written as follows:
+
+[^1]: A detailed discussion on choosing a prior distribution for a given parameter is outside the scope of this paper. Generally, one must consider the domain of the parameter and the range of various distributions. For example, the Beta distribution, which is defined for $x \in [0,1]$, is particularly well-suited as a prior distribution for the $\theta$ parameter of a Bernoulli distribution.
+
+$X|data \sim NegBin(\mu \sim Norm(mean = `r nb_mu`,\ sd = `r nb_mu * nb_mu_cv`),\ \phi \sim Exp(\lambda = `r round(1 / nb_phi, 4)`))$
 
 ```{r include=FALSE}
 bayesian_stan_model <- rstan::stan(
@@ -371,51 +402,54 @@ bayesian_stan_model <- rstan::stan(
       data{
         int<lower = 0> N;
         array[N] int obs;
-        real<lower = 0> df;
+        real<lower = 0> mu_mean;
+        real<lower = 0> mu_sd;
+        real<lower = 0> phi_mean;
       }
       
       parameters {
-        real<lower = 0> lambda;
+        real<lower = 0> mu;
+        real<lower = 0> phi;
       }
-    
+      
       model {
-        lambda ~ chi_square(df);
+        mu ~ normal(mu_mean, mu_sd);
+        phi ~ exponential(phi_mean); 
         
         for(i in 1:N) {
-          obs[i] ~ poisson(lambda);
+          obs[i] ~ neg_binomial_2(mu, phi);
         }
       }
     ',
   data = list(
     N = nrow(counts), 
     obs = counts$count,
-    df = point_estimate
+    mu_mean = nb_mu,
+    mu_sd = nb_mu * nb_mu_cv,
+    phi_mean = 1 / nb_phi
   ),
   chains = 2,
-  iter = 10000,
-  warmup = 5000,
+  iter = 75000,
+  warmup = 25000,
   seed = 314159
 )
 
-# rstan::summary(bayesian_stan_model)
-
-bayesian_lambda <- rstan::extract(object = bayesian_stan_model, pars = 'lambda')[[1]]
-
-# summary(bayesian_lambda)
+bayesian_mu <- rstan::extract(object = bayesian_stan_model, pars = 'mu')[[1]]
+bayesian_phi <- rstan::extract(object = bayesian_stan_model, pars = 'phi')[[1]]
 
 set.seed(314159)
 
 bayesian_sample <- purrr::map_dbl(
   .x = 1:iterations, 
-  .f = function(i) stats::rpois(n = 1, lambda = bayesian_lambda[i])
+  .f = function(i) stats::rnbinom(n = 1, mu = bayesian_mu[i], size = bayesian_phi[i])
 )
 
 bayesian <- mean(bayesian_sample)
 ```
 
-After running 10,000 simulations with your selected distribution, you're left with a central estimate of `r round(bayesian, 2)`. Since you used a wide prior distribution, your result will be closer to the historical average (`r round(mean(counts$count), 2)`) than the point estimate (`r round(point_estimate, 2)`).
+After running 100,000 simulations with your selected distribution, you're left with a central estimate of `r round(bayesian, 2)`. Since you used a wide prior distribution, your result will be closer to the historical average (`r round(mean(counts$count), 2)`) than the point estimate (`r round(point_estimate, 2)`).
 
-If instead you had strong reason to believe that there would be `r round(point_estimate, 2)` earthquakes, you may opt for a "stronger" prior by letting $\lambda$ have a much tighter distribution around the mean.
+If instead you had strong reason to believe that there would be `r round(point_estimate, 2)` earthquakes, you may opt for a "narrow" prior by letting $\mu$ have a much tighter distribution around the mean (e.g., lower coefficient of variation from `r scales::percent(nb_mu_cv)` to 1%). We'll leave this to the reader to experiment with by using the R script underlying this paper.
 
 Let's compare each result to the true number of earthquakes that occurred in 2012, which was `r true_count`. The results are shown in **Figure \@ref(fig:compare_true)**.
 
@@ -433,53 +467,83 @@ ggplot2::ggplot() +
     name = '',
     labels = c(
       'A' = 'Actual', 
-      'B' = 'Point Estimate', 
-      'C' = 'Process Risk', 
-      'D' = 'Parameter Risk', 
-      'E' = 'Bayesian'
+      'B' = 'Historical Counts',
+      'C' = 'Point Estimate', 
+      'D' = 'Process Risk', 
+      'E' = 'Parameter Risk', 
+      'F' = 'Bayesian'
     ),
     values = c(
-      'A' = '#FF8C00',
-      'B' = '#8096B2',
-      'C' = '#76D3FF',
-      'D' = '#009DE0',
-      'E' = '#002C77'
+      'A' = '#F59E0B',
+      'B' = '#F59E0B',
+      'C' = '#5D8C3C',
+      'D' = '#10B981',
+      'E' = '#8B5CF6',
+      'F' = '#2563EB'
     )
   ) +
+  # True count
+  ggplot2::geom_line(
+    mapping = ggplot2::aes(x = rep(true_count, 2), y = c(0, 1), group = 1, color = 'A'),
+    linetype = 'solid',
+    linewidth = 0.75
+  ) +
+  # Historical counts
+  ggplot2::geom_line(
+    mapping = ggplot2::aes(
+      x = sort(counts$count),
+      y = ecdf(counts$count)(sort(counts$count)),
+      group = 1, color = 'B'
+    ),
+    linewidth = 0.5
+  ) +
+  # Point Estimate
+  ggplot2::geom_line(
+    mapping = ggplot2::aes(x = rep(point_estimate, 2), y = c(0, 1), group = 1, color = 'C'),
+    linetype = 'dashed',
+    linewidth = 0.75
+  ) +
+  # Process Risk
   ggplot2::geom_line(
     mapping = ggplot2::aes(
       x = sort(process_risk_sample),
       y = ecdf(process_risk_sample)(sort(process_risk_sample)),
-      group = 1, color = 'C'
-    )
+      group = 1, color = 'D'
+    ),
+    linetype = 'dotted',
+    linewidth = 0.75
   ) +
+  # Parameter Risk
   ggplot2::geom_line(
     mapping = ggplot2::aes(
       x = sort(parameter_risk_sample),
       y = ecdf(parameter_risk_sample)(sort(parameter_risk_sample)),
-      group = 1, color = 'D'
-    )
+      group = 1, color = 'E'
+    ),
+    linetype = 'dotdash',
+    linewidth = 0.75
   ) +
+  # Bayesian
   ggplot2::geom_line(
     mapping = ggplot2::aes(
       x = sort(bayesian_sample),
       y = ecdf(bayesian_sample)(sort(bayesian_sample)),
-      group = 1, color = 'E'
-    )
-  ) +
-  ggplot2::geom_line(
-    mapping = ggplot2::aes(x = rep(point_estimate, 2), y = c(0, 1), group = 1, color = 'B'),
-    linetype = 'dashed'
-  ) +
-  ggplot2::geom_line(
-    mapping = ggplot2::aes(x = rep(true_count, 2), y = c(0, 1), group = 1, color = 'A'),
-    linetype = 'dashed'
+      group = 1, color = 'F'
+    ),
+    linetype = 'longdash',
+    linewidth = 0.75
   )
 ```
 
-It appears that all four methods severely overestimated the true average frequency. However, if we look at the Bayesian versus the other three, the true count is a more likely outcome. The true count is approximately equal to the `r scales::percent(length(bayesian_sample[bayesian_sample <= true_count]) / iterations, accuracy = 0.1)` confidence level of our Bayesian estimate. While this may still seem low, it is relatively close to the proportion of historical counts below `r true_count` (`r scales::percent(length(counts$count[counts$count <= true_count]) / nrow(counts), accuracy = 0.1)`).
+It appears that all four methods severely overestimated the true average frequency. However, if we look at the Bayesian versus the other three, the true count is a more likely outcome. The true count is approximately equal to the `r scales::percent(length(bayesian_sample[bayesian_sample <= true_count]) / iterations, accuracy = 0.1)` confidence level of our Bayesian estimate, versus approximately `r scales::percent(length(parameter_risk_sample[parameter_risk_sample <= true_count]) / iterations, accuracy = 0.1)` for the process risk and and `r scales::percent(length(process_risk_sample[process_risk_sample <= true_count]) / iterations, accuracy = 0.1)` for the parameter risk models.
 
-Additionally, there are essentially no "extreme" values (225+) being simulated.
+Additionally, there are far fewer "extreme" values being simulated since our predictive distribution much more closely follows the historical data.[^2]
+
+[^2]: Extreme values are defined as being outside range of values in the underlying data.
+
+As expected, the non-Bayesian methods are all centered at our point estimate with the parameter risk model having the widest spread. Since each of these methods are frequentist in nature, they fail to correct for any biases one might have when making their selections.
+
+\newpage
 
 With the benefit of hindsight, let's see why we overestimated the true counts in all four methods. As it turns out, we fell prey to (at least) two key biases:
 
@@ -510,9 +574,9 @@ gg_orig +
 
 # 6. Conclusion
 
-As we have shown, there are numerous ways one can go about forecasting a value for a future period. In the most basic approach, weighted averages provide an easy and explainable answer, but it fails to account for process and parameter risk. By leveraging Bayesian MCMC methods, the results will account for those risks[^1], but at the cost of being more time consuming and less explainable. The decision of which model to use will ultimately come down to personal preference, business considerations, and programming expertise. However, we believe that with the example above and provided supplementary files, you will have the skill set needed to make an informed decision.
+As we have shown, there are numerous ways one can go about forecasting a value for a future period. In the most basic approach, weighted averages provide an easy and explainable answer, but it fails to account for process and parameter risk. By leveraging Bayesian MCMC methods, the results will account for those risks[^3], but at the cost of being more time consuming and less explainable. The decision of which model to use will ultimately come down to personal preference, business considerations, and programming expertise. However, we believe that with the example above and provided supplementary files, you will have the skill set needed to make an informed decision.
 
-[^1]: We should note that it is relatively easy to also incorporate model risk into Bayesian MCMC models. With regards to the example above, one could run a second model that assumes a negative binomial frequency distribution and weight the results together.
+[^3]: We should note that it is relatively easy to also incorporate model risk into Bayesian MCMC models. With regards to the example above, one could run a second model that assumes an alternative frequency distribution and weight the results together.
 
 While our paper focused on the usage of Bayesian MCMC methods for forecasting purposes, the methods can and have been used in other applications. We provide a non-exhaustive list below of papers that utilize these methods to some extent:
 
@@ -530,9 +594,11 @@ We would like to extend our gratitude to our current and former colleagues for t
 
 ## Biographies of the Authors
 
-Spencer is a Senior Actuary with Spring Consulting Group. He holds a Bachelor of Science from Lebanon Valley College. Spencer is a Fellow of the Casualty Actuarial Society and a Member of the American Academy of Actuaries.
+Spencer is a Senior Actuary with Spring Consulting Group. He holds a Bachelor of Science in Actuarial Science, with minors in Mathematics and Economics from Lebanon Valley College. Spencer is a Fellow of the Casualty Actuarial Society and a Member of the American Academy of Actuaries.
 
 Kenneth is a Director with WTW. He holds a Bachelor of Science degree in Actuarial Mathematics and Statistics from the University of Pittsburgh. Kenny is a Fellow of the Casualty Actuarial Society and a Member of the American Academy of Actuaries.
+
+\newpage
 
 ## Citations
 
